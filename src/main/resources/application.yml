@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/social_media
+    username: alex
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+jwt:
+  secret: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJUpJv/bbRs54DGi+TaxroOG+0bwp2dxByUR4mWyHUi8jgI1cLnHiyF3/34vjHM+1YmSplHfCJLC/Z9MVh8AZ5sCAwEAAQ==
+  issuer: honeymoney
