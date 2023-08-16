@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.auth.payload.requests;
+package com.projects.socialmediaapi.security.payload.requests;
 
 public record TokenRefreshRequest(
         String refreshToken

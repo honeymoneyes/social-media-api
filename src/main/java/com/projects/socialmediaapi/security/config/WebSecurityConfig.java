@@ -1,5 +1,6 @@
 package com.projects.socialmediaapi.security.config;
 
+import com.projects.socialmediaapi.security.jwt.AuthEntryPointJwt;
 import com.projects.socialmediaapi.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +25,14 @@ public class WebSecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UserDetailsService userDetailsService;
+    private final AuthEntryPointJwt authEntryPointJwt;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(configurer ->
+                        configurer.authenticationEntryPoint(authEntryPointJwt))
                 .authorizeHttpRequests(request ->
                         request.requestMatchers("/auth/**", "/error").permitAll())
                 .authorizeHttpRequests(request ->
@@ -58,4 +62,5 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

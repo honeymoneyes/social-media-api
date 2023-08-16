@@ -1,6 +1,7 @@
 package com.projects.socialmediaapi.security.jwt.utils;
 
 
+import com.projects.socialmediaapi.user.models.Person;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+
+import static com.projects.socialmediaapi.security.jwt.utils.MapUtils.toClaims;
 
 @Component
 public class JwtUtils {
@@ -23,10 +25,13 @@ public class JwtUtils {
     private String jwt_secret;
     @Value("${jwt.issuer}")
     private String jwt_issuer;
+    @Value("${jwt.expirationMs}")
+    private Long jwt_expirationMs;
 
-    public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
+
+    public String generateToken(UserDetails userDetails, Person person) {
         return Jwts.builder()
-                .setClaims(claims)
+                .setClaims(toClaims(person))
                 .setId(UUID.randomUUID().toString())
                 .setSubject(userDetails.getUsername())
                 .setIssuer(jwt_issuer)
@@ -51,9 +56,6 @@ public class JwtUtils {
                 .getBody();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        return isEqualsUsername(userDetails, token) && !isTokenExpired(token);
-    }
 
     private boolean isEqualsUsername(UserDetails userDetails, String token) {
         return extractUsername(token).equals(userDetails.getUsername());
@@ -61,13 +63,18 @@ public class JwtUtils {
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(getNowDate());
+
     }
 
-    private static Date getExpirationDate() {
-        return Date.from(ZonedDateTime.now().plusMinutes(10).toInstant());
+    private Date getExpirationDate() {
+        return Date.from(ZonedDateTime.now().toInstant().plusMillis(jwt_expirationMs));
     }
 
-    private static Date getNowDate() {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        return isEqualsUsername(userDetails, token) && !isTokenExpired(token);
+    }
+
+    private Date getNowDate() {
         return Date.from(ZonedDateTime.now().toInstant());
     }
 

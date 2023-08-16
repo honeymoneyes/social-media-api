@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class PersonDetailsService implements UserDetailsService {
@@ -19,7 +21,7 @@ public class PersonDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Person person = personRepository
                 .findByEmail(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
         return new PersonDetails(person);
     }

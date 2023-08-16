@@ -9,12 +9,17 @@ import java.util.Collection;
 
 @RequiredArgsConstructor
 public class PersonDetails implements UserDetails {
+    private Long id;
 
     private final Person person;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
+    }
+
+    public Long getId() {
+        return person.getId();
     }
 
     @Override

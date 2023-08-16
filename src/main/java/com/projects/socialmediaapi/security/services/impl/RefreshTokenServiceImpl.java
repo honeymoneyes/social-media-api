@@ -1,19 +1,23 @@
 package com.projects.socialmediaapi.security.services.impl;
 
-import com.projects.socialmediaapi.security.constants.TokenConstants;
-import com.projects.socialmediaapi.security.exceptions.TokenRefreshException;
+import com.projects.socialmediaapi.security.exceptions.DuplicateLoginException;
+import com.projects.socialmediaapi.security.exceptions.RefreshTokenExpirationException;
 import com.projects.socialmediaapi.security.models.RefreshToken;
 import com.projects.socialmediaapi.security.repositories.RefreshTokenRepository;
 import com.projects.socialmediaapi.security.services.RefreshTokenService;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.projects.socialmediaapi.security.constants.AuthConstants.LOGIN_ALREADY_COMPLETED;
+import static com.projects.socialmediaapi.security.constants.TokenConstants.REFRESH_TOKEN_EXPIRED;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +35,22 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken createRefreshToken(Long userId) {
-        RefreshToken refreshToken = RefreshToken.builder()
-                .person(personRepository
+        RefreshToken refreshToken = refreshTokenBuild(userId);
+
+        try {
+            refreshTokenRepository.save(refreshToken);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateLoginException(LOGIN_ALREADY_COMPLETED);
+        }
+
+        return refreshToken;
+    }
+
+    private RefreshToken refreshTokenBuild(Long userId) {
+        return RefreshToken.builder()
+                .person((personRepository
                         .findById(userId)
-                        .get())
+                        .get()))
                 .expirationDate(ZonedDateTime
                         .now()
                         .toInstant()
@@ -43,24 +59,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                         .randomUUID()
                         .toString())
                 .build();
-
-        refreshTokenRepository.save(refreshToken);
-
-        return refreshToken;
     }
 
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpirationDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), TokenConstants.TOKEN_EXPIRED);
+            throw new RefreshTokenExpirationException(
+                    REFRESH_TOKEN_EXPIRED);
         }
-
         return token;
-    }
-
-    @Override
-    public int deleteByUserId(Long userId) {
-        return refreshTokenRepository.delet(personRepository.findById(userId).get());
     }
 }
