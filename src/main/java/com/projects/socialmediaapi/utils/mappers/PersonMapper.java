@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.utils;
+package com.projects.socialmediaapi.utils.mappers;
 
 import com.projects.socialmediaapi.auth.payload.requests.RegisterRequest;
 import com.projects.socialmediaapi.user.models.Person;

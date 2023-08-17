@@ -16,7 +16,7 @@ import com.projects.socialmediaapi.user.exceptions.UserAlreadyExistException;
 import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
-import com.projects.socialmediaapi.utils.PersonMapper;
+import com.projects.socialmediaapi.utils.mappers.PersonMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -98,9 +98,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private PersonDetails authenticateAndFetchUserDetails(UsernamePasswordAuthenticationToken authToken) {
-        return (PersonDetails) authenticationManager
-                .authenticate(authToken)
-                .getPrincipal();
+            return (PersonDetails) authenticationManager
+                        .authenticate(authToken)
+                        .getPrincipal();
+
     }
 
     private static JwtResponse getJwtResponse(String token, RefreshToken refreshToken) {
