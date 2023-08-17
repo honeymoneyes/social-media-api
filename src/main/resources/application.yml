@@ -1,5 +1,7 @@
 spring:
   datasource:
+    hikari:
+      auto-commit: false
     url: jdbc:postgresql://localhost:5432/social_media
     username: alex
     password: 1234
@@ -16,5 +18,5 @@ spring:
 jwt:
   secret: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJUpJv/bbRs54DGi+TaxroOG+0bwp2dxByUR4mWyHUi8jgI1cLnHiyF3/34vjHM+1YmSplHfCJLC/Z9MVh8AZ5sCAwEAAQ==
   issuer: honeymoney
-  expirationMs: 10000
-  refreshExpirationMs: 20000
+  expirationMs: 120000
+  refreshExpirationMs: 200000
