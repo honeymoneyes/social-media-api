@@ -7,6 +7,7 @@
 + PostgreSQL Database
 + Lombok
 
+
 # Configuration Steps:
 
 ### Clone the Application:
