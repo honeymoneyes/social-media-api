@@ -54,7 +54,7 @@ public class ImageService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static String getFileName(MultipartFile file) {
+    public static String getFileName(MultipartFile file) {
         return StringUtils
                 .cleanPath(Objects
                         .requireNonNull(file

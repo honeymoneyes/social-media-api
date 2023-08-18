@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static com.projects.socialmediaapi.post.constants.PostConstants.*;
+import static com.projects.socialmediaapi.post.services.ImageService.getFileName;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 
 @Service
@@ -37,15 +38,18 @@ public class PostService {
     private final ImageRepository imageRepository;
 
     // CREATE ----------------------------------------------------------------------------------------------------------
+
     @Transactional
     public UploadPostResponse createPost(PostRequest request) throws IOException {
 
         Person person = getAuthenticatePerson();
 
         Image image;
-        if (imageRequestIsNull(request)) return getUploadPostResponse(
-                request.getTitle(),
-                request.getBody());
+        if (imageRequestIsNull(request)) {
+            return getUploadPostResponse(
+                    request.getTitle(),
+                    request.getBody());
+        }
 
         image = imageService.createPostWithImageAndReturnImage(
                 request,
@@ -60,6 +64,7 @@ public class PostService {
 
 
     // UPDATE ----------------------------------------------------------------------------------------------------------
+
     @Transactional
     public UpdatePostResponse updatePost(PostRequest request, Long id) throws IOException {
         Person person = getAuthenticatePerson();
@@ -75,27 +80,17 @@ public class PostService {
         post.setTitle(request.getTitle());
         post.setBody(request.getBody());
 
-        if (request.getImage() == null) {
+        if (imageRequestIsNull(request)) {
             postRepository.save(post);
             return getUpdatePostResponse(id, post);
-            //todo проверить на null
         }
 
-        Image image = imageRepository
-                .findById(post
-                        .getImage()
-                        .getId())
-                .orElseThrow(() -> new ImageNotFoundException(IMAGE_NOT_FOUND));
-
-        image.setData(request.getImage().getBytes());
-        // TODO Дописать изменения фото
-        postRepository.save(post);
-        imageRepository.save(image);
+        imageUpdate(request, post);
         return getUpdatePostResponse(id, post);
     }
 
-
     // DELETE ----------------------------------------------------------------------------------------------------------
+
     @Transactional
     public DeletePostResponse deletePost(Long id) {
         Person person = getAuthenticatePerson();
@@ -128,10 +123,7 @@ public class PostService {
     // -----------------------------------------------------------------------------------------------------------------
 
     private boolean imageRequestIsNull(PostRequest request) {
-        if (request.getImage() == null) {
-            return true;
-        }
-        return false;
+        return request.getImage() == null || request.getImage().isEmpty();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -194,6 +186,29 @@ public class PostService {
                 .id(post.getId())
                 .message(String.format(POST_UPDATED, id))
                 .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private void imageUpdate(PostRequest request, Post post) throws IOException {
+        Image image = getImageByPostId(post);
+
+        image.setData(request.getImage().getBytes());
+        image.setFileName(getFileName(request.getImage()));
+        image.setFileType(request.getImage().getContentType());
+
+        postRepository.save(post);
+        imageRepository.save(image);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Image getImageByPostId(Post post) {
+        return imageRepository
+                .findById(post
+                        .getImage()
+                        .getId())
+                .orElseThrow(() -> new ImageNotFoundException(IMAGE_NOT_FOUND));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
