@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.exceptions;
+package com.projects.socialmediaapi.user.exceptions;
 
 public class UnauthorizedPostDeletedException extends RuntimeException {
     public UnauthorizedPostDeletedException(String message) {

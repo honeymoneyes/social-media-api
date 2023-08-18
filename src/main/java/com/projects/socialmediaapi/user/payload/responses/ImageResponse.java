@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.payload.responses;
+package com.projects.socialmediaapi.user.payload.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

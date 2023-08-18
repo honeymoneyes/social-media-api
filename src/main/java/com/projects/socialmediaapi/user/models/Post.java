@@ -1,10 +1,7 @@
-package com.projects.socialmediaapi.post.models;
+package com.projects.socialmediaapi.user.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.projects.socialmediaapi.user.models.Person;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
+@ToString
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

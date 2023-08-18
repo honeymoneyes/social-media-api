@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.payload.requests;
+package com.projects.socialmediaapi.user.payload.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

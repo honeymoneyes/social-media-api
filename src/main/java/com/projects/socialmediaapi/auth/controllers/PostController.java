@@ -1,12 +1,12 @@
 package com.projects.socialmediaapi.auth.controllers;
 
-import com.projects.socialmediaapi.post.payload.requests.PostRequest;
-import com.projects.socialmediaapi.post.payload.responses.DeletePostResponse;
-import com.projects.socialmediaapi.post.payload.responses.PostResponse;
-import com.projects.socialmediaapi.post.payload.responses.UpdatePostResponse;
-import com.projects.socialmediaapi.post.payload.responses.UploadPostResponse;
-import com.projects.socialmediaapi.post.services.ImageService;
-import com.projects.socialmediaapi.post.services.PostService;
+import com.projects.socialmediaapi.user.payload.requests.PostRequest;
+import com.projects.socialmediaapi.user.payload.responses.DeletePostResponse;
+import com.projects.socialmediaapi.user.payload.responses.PostResponse;
+import com.projects.socialmediaapi.user.payload.responses.UpdatePostResponse;
+import com.projects.socialmediaapi.user.payload.responses.UploadPostResponse;
+import com.projects.socialmediaapi.user.services.ImageService;
+import com.projects.socialmediaapi.user.services.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-import static com.projects.socialmediaapi.post.constants.EndpointConstants.*;
+import static com.projects.socialmediaapi.user.constants.EndpointConstants.*;
 
 @RestController
 @RequestMapping(MAIN)

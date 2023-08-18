@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.payload.responses;
+package com.projects.socialmediaapi.user.payload.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdatePostResponse {
+public class DeletePostResponse {
     private Long id;
     private String message;
 }

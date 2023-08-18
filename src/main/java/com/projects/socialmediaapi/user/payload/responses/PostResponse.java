@@ -1,6 +1,6 @@
-package com.projects.socialmediaapi.post.payload.responses;
+package com.projects.socialmediaapi.user.payload.responses;
 
-import com.projects.socialmediaapi.post.models.Post;
+import com.projects.socialmediaapi.user.models.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

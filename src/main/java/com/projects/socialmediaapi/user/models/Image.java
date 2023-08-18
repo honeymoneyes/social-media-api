@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.models;
+package com.projects.socialmediaapi.user.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
+@ToString
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

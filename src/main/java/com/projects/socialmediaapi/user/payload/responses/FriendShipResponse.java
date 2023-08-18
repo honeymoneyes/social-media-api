@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.payload.responses;
+package com.projects.socialmediaapi.user.payload.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UploadPostResponse {
-    private String title;
-    private String body;
-    private ImageResponse imageResponse;
+public class FriendShipResponse {
     private String message;
 }

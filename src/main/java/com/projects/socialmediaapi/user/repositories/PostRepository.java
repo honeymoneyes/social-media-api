@@ -1,6 +1,6 @@
-package com.projects.socialmediaapi.post.repositories;
+package com.projects.socialmediaapi.user.repositories;
 
-import com.projects.socialmediaapi.post.models.Post;
+import com.projects.socialmediaapi.user.models.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

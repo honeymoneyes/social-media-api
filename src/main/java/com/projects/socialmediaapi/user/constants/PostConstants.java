@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.constants;
+package com.projects.socialmediaapi.user.constants;
 
 public class PostConstants {
 

@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.post.exceptions;
+package com.projects.socialmediaapi.user.exceptions;
 
 public class PostNotFoundException extends RuntimeException {
     public PostNotFoundException(String message) {

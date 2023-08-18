@@ -1,7 +1,7 @@
-package com.projects.socialmediaapi.post.advice;
+package com.projects.socialmediaapi.user.advice;
 
-import com.projects.socialmediaapi.post.exceptions.*;
 import com.projects.socialmediaapi.security.advice.ErrorDetails;
+import com.projects.socialmediaapi.user.exceptions.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -86,4 +86,6 @@ public class PostControllerAdvice {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+
 }

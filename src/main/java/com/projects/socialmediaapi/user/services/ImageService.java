@@ -1,12 +1,12 @@
-package com.projects.socialmediaapi.post.services;
+package com.projects.socialmediaapi.user.services;
 
-import com.projects.socialmediaapi.post.exceptions.FilePathInvalidException;
-import com.projects.socialmediaapi.post.exceptions.ImageNotFoundException;
-import com.projects.socialmediaapi.post.models.Image;
-import com.projects.socialmediaapi.post.models.Post;
-import com.projects.socialmediaapi.post.payload.requests.PostRequest;
-import com.projects.socialmediaapi.post.repositories.ImageRepository;
-import com.projects.socialmediaapi.post.repositories.PostRepository;
+import com.projects.socialmediaapi.user.exceptions.FilePathInvalidException;
+import com.projects.socialmediaapi.user.exceptions.ImageNotFoundException;
+import com.projects.socialmediaapi.user.models.Image;
+import com.projects.socialmediaapi.user.models.Post;
+import com.projects.socialmediaapi.user.payload.requests.PostRequest;
+import com.projects.socialmediaapi.user.repositories.ImageRepository;
+import com.projects.socialmediaapi.user.repositories.PostRepository;
 import com.projects.socialmediaapi.user.models.Person;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,8 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.projects.socialmediaapi.post.constants.PostConstants.IMAGE_NOT_FOUND;
-import static com.projects.socialmediaapi.post.constants.PostConstants.INVALID_FILE_PATH;
+import static com.projects.socialmediaapi.user.constants.PostConstants.IMAGE_NOT_FOUND;
+import static com.projects.socialmediaapi.user.constants.PostConstants.INVALID_FILE_PATH;
 
 @Service
 @RequiredArgsConstructor

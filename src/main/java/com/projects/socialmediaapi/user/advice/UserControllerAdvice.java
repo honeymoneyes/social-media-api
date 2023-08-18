@@ -1,6 +1,7 @@
 package com.projects.socialmediaapi.user.advice;
 
 import com.projects.socialmediaapi.security.advice.ErrorDetails;
+import com.projects.socialmediaapi.user.exceptions.SubscriberNotFoundException;
 import com.projects.socialmediaapi.user.exceptions.UserAlreadyExistException;
 import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,6 +46,20 @@ public class UserControllerAdvice {
                 .message(exception.getMessage())
                 .build();
 
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(SubscriberNotFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ErrorDetails handleSubscriberNotFoundException(SubscriberNotFoundException exception) {
+        return ErrorDetails.builder()
+                .status(NOT_FOUND.value())
+                .error("SUBSCRIBER_NOT_FOUND")
+                .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
+                        .format(LocalDateTime.now()))
+                .message(exception.getMessage())
+                .build();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
