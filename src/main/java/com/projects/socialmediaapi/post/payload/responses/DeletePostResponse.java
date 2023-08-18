@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UploadPostResponse {
-    private String title;
-    private String body;
-    private ImageResponse imageResponse;
+public class DeletePostResponse {
+    private Long id;
     private String message;
 }

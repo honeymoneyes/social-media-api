@@ -4,11 +4,15 @@ public class EndpointConstants {
 
     public static final String MAIN = "/user";
 
+    public static final String POST = "/post";
+
     public static final String CREATE = "/posts/create";
 
-    public static final String SHOW_ALL = "/{userId}/posts";
+    public static final String SHOW_ALL_POSTS = "/{userId}/posts";
 
-    public static final String UPDATE = "/{userId}/posts/update/{id}";
+    public static final String SHOW_IMAGE_OF_POST = "/{postId}/show_image";
 
-    public static final String DELETE = "/{userId}/posts/delete/{id}";
+    public static final String UPDATE = "/posts/{postId}/update";
+
+    public static final String DELETE = "/posts/{postId}/delete";
 }

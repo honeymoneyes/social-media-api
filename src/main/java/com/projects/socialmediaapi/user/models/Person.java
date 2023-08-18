@@ -1,6 +1,6 @@
 package com.projects.socialmediaapi.user.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import com.projects.socialmediaapi.post.models.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +14,10 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "id")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +26,5 @@ public class Person {
     private String email;
     private String password;
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
     private List<Post> posts;
 }

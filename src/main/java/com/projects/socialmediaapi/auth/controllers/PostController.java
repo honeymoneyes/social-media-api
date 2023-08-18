@@ -1,15 +1,15 @@
 package com.projects.socialmediaapi.auth.controllers;
 
 import com.projects.socialmediaapi.post.payload.requests.PostRequest;
+import com.projects.socialmediaapi.post.payload.responses.DeletePostResponse;
 import com.projects.socialmediaapi.post.payload.responses.PostResponse;
+import com.projects.socialmediaapi.post.payload.responses.UpdatePostResponse;
 import com.projects.socialmediaapi.post.payload.responses.UploadPostResponse;
 import com.projects.socialmediaapi.post.services.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -22,30 +22,26 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping(SHOW_ALL_POSTS)
+    public ResponseEntity<PostResponse> performShowAllPosts(@PathVariable("userId") Long postId) {
+        return ResponseEntity.ok(postService.showAllPostsByUserId(postId));
+    }
+
     @PostMapping(CREATE)
     public ResponseEntity<UploadPostResponse> performCreatePost(@Valid
                                                                 @ModelAttribute PostRequest request) throws IOException {
         return ResponseEntity.ok(postService.createPost(request));
     }
 
-    @GetMapping("/show_image/{postId}")
-    public ResponseEntity<Resource> performShowImage(@PathVariable("postId") Long postId) throws IOException {
-        return postService.showImageByPostId(postId);
+    @PatchMapping(UPDATE)
+    public ResponseEntity<UpdatePostResponse> performUpdatePost(@Valid
+                                                                @ModelAttribute PostRequest request,
+                                                                @PathVariable("postId") Long id) throws IOException {
+        return ResponseEntity.ok(postService.updatePost(request, id));
     }
 
-    @GetMapping(SHOW_ALL)
-    public ResponseEntity<PostResponse> performShowAllPosts(@PathVariable("userId") Long postId) throws IOException {
-        return ResponseEntity.ok(postService.showAllPostsByUserId(postId));
+    @DeleteMapping(DELETE)
+    public ResponseEntity<DeletePostResponse> performDeletePost(@PathVariable("postId") Long id) {
+        return ResponseEntity.ok(postService.deletePost(id));
     }
-
-
-//    @PatchMapping(UPDATE)
-//    public ResponseEntity<?> performUpdatePost() {
-//        return ResponseEntity.ok();
-//    }
-//
-//    @DeleteMapping(DELETE)
-//    public ResponseEntity<?> performDeletePost() {
-//        return ResponseEntity.ok();
-//    }
 }

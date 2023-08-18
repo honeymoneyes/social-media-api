@@ -5,7 +5,7 @@ public class AuthConstants {
 
     public static final String BEARER = "Bearer ";
 
-    public static final String REGISTERED_SUCCESS = "User successfully created!";
+    public static final String REGISTERED_SUCCESS = "User successfully registered!";
 
     public static final String LOGIN_ALREADY_COMPLETED = "Login already done.";
 
