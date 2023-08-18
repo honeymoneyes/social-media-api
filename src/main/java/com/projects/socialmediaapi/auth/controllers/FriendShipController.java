@@ -23,8 +23,13 @@ public class FriendShipController {
     }
 
     @PostMapping("/follow/{userId}")
-    public ResponseEntity<?> performAddFriend(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.addFriend(id));
+    public ResponseEntity<?> performFollow(@PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipService.follow(id));
+    }
+
+    @PostMapping("/unfollow/{userId}")
+    public ResponseEntity<?> performUnfollow(@PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipService.unfollow(id));
     }
 
     @PostMapping("/accept/{userId}")

@@ -1,6 +1,7 @@
 package com.projects.socialmediaapi.user.services;
 
 import com.projects.socialmediaapi.security.services.impl.PersonDetails;
+import com.projects.socialmediaapi.user.exceptions.SubscriberAlreadyExistException;
 import com.projects.socialmediaapi.user.exceptions.SubscriberNotFoundException;
 import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.models.Person;
@@ -9,14 +10,10 @@ import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.projects.socialmediaapi.user.constants.UserConstants.SUBSCRIBER_NOT_FOUND;
-import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
+import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,27 +24,37 @@ public class FriendShipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public FriendShipResponse addFriend(Long receiverId) {
+    public FriendShipResponse follow(Long receiverId) {
 
-        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        Result result = getLoggedUserAndOtherUser(receiverId);
 
-        Person sender = personRepository
-                .findById(personDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
-        Person receiver = personRepository
-                .findById(receiverId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
-        receiver.getSubscribers().add(sender);
-        System.out.println(receiver.getSubscribers());
-        personRepository.save(sender);
-        personRepository.save(receiver);
+        if (!result.loggedInPerson.getSubscribers().contains(result.otherPerson)) {
+            result.loggedInPerson.getSubscribers().add(result.otherPerson);
+        } else {
+            throw new SubscriberAlreadyExistException(SUBSCRIBER_ALREADY_EXIST);
+        }
+        personRepository.save(result.loggedInPerson);
+        personRepository.save(result.otherPerson);
         return FriendShipResponse.builder()
-                .message("A user named - " + sender.getUsername() + " subscribed to a user named " + receiver.getUsername())
+                .message(String.format("You've signed up for %s", result.otherPerson.getUsername()))
+                .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public FriendShipResponse unfollow(Long userId) {
+        Result result = getLoggedUserAndOtherUser(userId);
+
+        if (result.loggedInPerson().getSubscribers().contains(result.otherPerson())) {
+            result.loggedInPerson().getSubscribers().remove(result.otherPerson());
+        } else {
+            throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
+        }
+
+        personRepository.save(result.loggedInPerson);
+        personRepository.save(result.otherPerson);
+        return FriendShipResponse.builder()
+                .message(String.format("You unsubscribed from %s",result.otherPerson().getUsername()))
                 .build();
     }
 
@@ -55,34 +62,25 @@ public class FriendShipService {
 
     public FriendShipResponse acceptFriend(Long subscriberId) {
 
-        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        Result result = getLoggedUserAndOtherUser(subscriberId);
 
-        Person person = personRepository
-                .findById(personDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
-        Person subscriber = personRepository
-                .findById(subscriberId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
-        if (person.getSubscribers().contains(subscriber)) {
-            person.getFriends().add(subscriber);
-            subscriber.getSubscribers().add(person);
-            subscriber.getFriends().add(person);
+        if (result.loggedInPerson.getSubscribers().contains(result.otherPerson)) {
+            result.loggedInPerson.getFriends().add(result.otherPerson);
+            result.otherPerson.getSubscribers().add(result.loggedInPerson);
+            result.otherPerson.getFriends().add(result.loggedInPerson);
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
 
-        personRepository.save(person);
-        personRepository.save(subscriber);
+        personRepository.save(result.loggedInPerson);
+        personRepository.save(result.otherPerson);
 
         return FriendShipResponse.builder()
-                .message("A user named - " + person.getUsername() + " add friend with a user named " + subscriber.getUsername())
+                .message(String.format("You and %s are friends now.", result.otherPerson.getUsername()))
                 .build();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public Set<Person> showFriends(Long userId) {
         return personRepository
@@ -99,4 +97,28 @@ public class FriendShipService {
                 .map(Person::getSubscribers)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Result getLoggedUserAndOtherUser(Long userId) {
+        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Person loggedInPerson = personRepository
+                .findById(personDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        Person otherPerson = personRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        return new Result(loggedInPerson, otherPerson);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private record Result(Person loggedInPerson, Person otherPerson) {
+    }
+    // -----------------------------------------------------------------------------------------------------------------
 }

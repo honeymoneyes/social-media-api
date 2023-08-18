@@ -33,7 +33,7 @@ public class Person {
     @JoinTable(name = "friends",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    @JsonManagedReference
+    @JsonBackReference
     private Set<Person> friends;
 
     @ManyToMany

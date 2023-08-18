@@ -6,4 +6,6 @@ public class UserConstants {
     public static final String USER_ALREADY_EXIST = "User already exist!";
 
     public static final String SUBSCRIBER_NOT_FOUND = "Subscriber not found!";
+
+    public static final String SUBSCRIBER_ALREADY_EXIST = "Subscriber already subscribed!";
 }
