@@ -94,6 +94,7 @@ public class PostService {
     @Transactional
     public DeletePostResponse deletePost(Long id) {
         Person person = getAuthenticatePerson();
+
         Post post = postRepository
                 .findById(id)
                 .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));

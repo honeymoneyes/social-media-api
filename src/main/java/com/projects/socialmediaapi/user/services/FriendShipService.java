@@ -26,35 +26,57 @@ public class FriendShipService {
 
     public FriendShipResponse follow(Long receiverId) {
 
-        Result result = getLoggedUserAndOtherUser(receiverId);
+        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
-        if (!result.loggedInPerson.getSubscribers().contains(result.otherPerson)) {
-            result.loggedInPerson.getSubscribers().add(result.otherPerson);
+        Person loggedInPerson = personRepository
+                .findById(personDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        Person otherPerson = personRepository
+                .findById(receiverId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        if (!otherPerson.getSubscribers().contains(loggedInPerson)) {
+            otherPerson.getSubscribers().add(loggedInPerson);
         } else {
             throw new SubscriberAlreadyExistException(SUBSCRIBER_ALREADY_EXIST);
         }
-        personRepository.save(result.loggedInPerson);
-        personRepository.save(result.otherPerson);
+        personRepository.save(loggedInPerson);
+        personRepository.save(otherPerson);
         return FriendShipResponse.builder()
-                .message(String.format("You've signed up for %s", result.otherPerson.getUsername()))
+                .message(String.format("You've signed up for %s", otherPerson.getUsername()))
                 .build();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public FriendShipResponse unfollow(Long userId) {
-        Result result = getLoggedUserAndOtherUser(userId);
+        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
-        if (result.loggedInPerson().getSubscribers().contains(result.otherPerson())) {
-            result.loggedInPerson().getSubscribers().remove(result.otherPerson());
+        Person loggedInPerson = personRepository
+                .findById(personDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        Person otherPerson = personRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        if (otherPerson.getSubscribers().contains(loggedInPerson)) {
+            otherPerson.getSubscribers().remove(loggedInPerson);
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
 
-        personRepository.save(result.loggedInPerson);
-        personRepository.save(result.otherPerson);
+        personRepository.save(loggedInPerson);
+        personRepository.save(otherPerson);
         return FriendShipResponse.builder()
-                .message(String.format("You unsubscribed from %s",result.otherPerson().getUsername()))
+                .message(String.format("You unsubscribed from %s",otherPerson.getUsername()))
                 .build();
     }
 
@@ -62,21 +84,32 @@ public class FriendShipService {
 
     public FriendShipResponse acceptFriend(Long subscriberId) {
 
-        Result result = getLoggedUserAndOtherUser(subscriberId);
+        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
-        if (result.loggedInPerson.getSubscribers().contains(result.otherPerson)) {
-            result.loggedInPerson.getFriends().add(result.otherPerson);
-            result.otherPerson.getSubscribers().add(result.loggedInPerson);
-            result.otherPerson.getFriends().add(result.loggedInPerson);
+        Person loggedInPerson = personRepository
+                .findById(personDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        Person otherPerson = personRepository
+                .findById(subscriberId)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        if (loggedInPerson.getSubscribers().contains(otherPerson)) {
+            loggedInPerson.getFriends().add(otherPerson);
+            otherPerson.getSubscribers().add(loggedInPerson);
+            otherPerson.getFriends().add(loggedInPerson);
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
 
-        personRepository.save(result.loggedInPerson);
-        personRepository.save(result.otherPerson);
+        personRepository.save(loggedInPerson);
+        personRepository.save(otherPerson);
 
         return FriendShipResponse.builder()
-                .message(String.format("You and %s are friends now.", result.otherPerson.getUsername()))
+                .message(String.format("You and %s are friends now.", otherPerson.getUsername()))
                 .build();
     }
 
@@ -100,25 +133,8 @@ public class FriendShipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private Result getLoggedUserAndOtherUser(Long userId) {
-        PersonDetails personDetails = (PersonDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        Person loggedInPerson = personRepository
-                .findById(personDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
-        Person otherPerson = personRepository
-                .findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        return new Result(loggedInPerson, otherPerson);
-    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private record Result(Person loggedInPerson, Person otherPerson) {
-    }
     // -----------------------------------------------------------------------------------------------------------------
 }
