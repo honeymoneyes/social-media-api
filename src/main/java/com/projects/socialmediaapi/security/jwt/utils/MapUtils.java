@@ -14,6 +14,10 @@ public class MapUtils {
         Class<?> objClass = obj.getClass();
 
         Arrays.stream(objClass.getDeclaredFields())
+                .filter(field ->
+                        !field.getName().equals("posts") &&
+                        !field.getName().equals("friends") &&
+                        !field.getName().equals("subscribers"))
                 .forEach(field -> addFieldsToMap(obj, map, field));
 
         return map;

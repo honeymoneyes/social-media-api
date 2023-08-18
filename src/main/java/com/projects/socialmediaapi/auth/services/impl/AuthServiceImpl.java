@@ -34,6 +34,8 @@ import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final PersonMapper personMapper;
     private final PasswordEncoder passwordEncoder;
     private final PersonRepository personRepository;
@@ -42,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final UserDetailsService userDetailsService;
 
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public MessageResponse register(RegisterRequest request) {
@@ -55,11 +58,15 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private void userIfExist(RegisterRequest request) {
         if (personRepository.existsByEmail(request.email())) {
             throw new UserAlreadyExistException(USER_ALREADY_EXIST);
         }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public JwtResponse login(LoginRequest request) {
@@ -71,19 +78,26 @@ public class AuthServiceImpl implements AuthService {
         return getJwtResponse(token, refreshToken);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     public TokenRefreshResponse refresh(TokenRefreshRequest request) {
         String requestRefreshToken = request.refreshToken();
         return getTokenRefreshResponse(requestRefreshToken);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private TokenRefreshResponse getTokenRefreshResponse(String requestRefreshToken) {
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getPerson)
                 .map(person -> buildTokenRefreshResponse(requestRefreshToken, person))
-                .orElseThrow(() -> new RefreshTokenNotFoundException(requestRefreshToken, REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(() ->
+                        new RefreshTokenNotFoundException(requestRefreshToken, REFRESH_TOKEN_NOT_FOUND));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static UsernamePasswordAuthenticationToken createAuthToken(LoginRequest request) {
         return new UsernamePasswordAuthenticationToken(
@@ -91,11 +105,15 @@ public class AuthServiceImpl implements AuthService {
                 request.password());
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private Person findPersonByEmail(LoginRequest request) {
         return personRepository
                 .findByEmail(request.email())
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private PersonDetails authenticateAndFetchUserDetails(UsernamePasswordAuthenticationToken authToken) {
             return (PersonDetails) authenticationManager
@@ -104,6 +122,8 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static JwtResponse getJwtResponse(String token, RefreshToken refreshToken) {
         return JwtResponse.builder()
                 .token(token)
@@ -111,9 +131,13 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private TokenRefreshResponse buildTokenRefreshResponse(String requestRefreshToken, Person person) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(person.getEmail());
         String token = jwtUtils.generateToken(userDetails, person);
         return new TokenRefreshResponse(token, requestRefreshToken, BEARER);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

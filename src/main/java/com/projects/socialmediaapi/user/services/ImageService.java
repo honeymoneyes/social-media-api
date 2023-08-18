@@ -3,11 +3,11 @@ package com.projects.socialmediaapi.user.services;
 import com.projects.socialmediaapi.user.exceptions.FilePathInvalidException;
 import com.projects.socialmediaapi.user.exceptions.ImageNotFoundException;
 import com.projects.socialmediaapi.user.models.Image;
+import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.models.Post;
 import com.projects.socialmediaapi.user.payload.requests.PostRequest;
 import com.projects.socialmediaapi.user.repositories.ImageRepository;
 import com.projects.socialmediaapi.user.repositories.PostRepository;
-import com.projects.socialmediaapi.user.models.Person;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -27,6 +27,7 @@ import static com.projects.socialmediaapi.user.constants.PostConstants.INVALID_F
 @Service
 @RequiredArgsConstructor
 public class ImageService {
+
     // -----------------------------------------------------------------------------------------------------------------
 
     private final PostRepository postRepository;

@@ -46,7 +46,7 @@ public class PostController {
     @PostMapping(CREATE)
     public ResponseEntity<UploadPostResponse> performCreatePost(@Valid
                                                                 @ModelAttribute
-                                                                    PostRequest request) throws IOException {
+                                                                PostRequest request) throws IOException {
         return ResponseEntity.ok(postService.createPost(request));
     }
 

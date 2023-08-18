@@ -1,19 +1,15 @@
 package com.projects.socialmediaapi.user.services;
 
-import com.projects.socialmediaapi.user.exceptions.ImageNotFoundException;
-import com.projects.socialmediaapi.user.exceptions.PostNotFoundException;
-import com.projects.socialmediaapi.user.exceptions.UnauthorizedPostDeletedException;
-import com.projects.socialmediaapi.user.exceptions.UnauthorizedPostUpdatedException;
+import com.projects.socialmediaapi.security.services.impl.PersonDetails;
+import com.projects.socialmediaapi.user.exceptions.*;
 import com.projects.socialmediaapi.user.models.Image;
+import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.models.Post;
 import com.projects.socialmediaapi.user.payload.requests.PostRequest;
 import com.projects.socialmediaapi.user.payload.responses.*;
 import com.projects.socialmediaapi.user.repositories.ImageRepository;
-import com.projects.socialmediaapi.user.repositories.PostRepository;
-import com.projects.socialmediaapi.security.services.impl.PersonDetails;
-import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
-import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
+import com.projects.socialmediaapi.user.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,12 +20,13 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static com.projects.socialmediaapi.user.constants.PostConstants.*;
-import static com.projects.socialmediaapi.user.services.ImageService.getFileName;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
+import static com.projects.socialmediaapi.user.services.ImageService.getFileName;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
+
     // -----------------------------------------------------------------------------------------------------------------
 
     private final PersonRepository personRepository;

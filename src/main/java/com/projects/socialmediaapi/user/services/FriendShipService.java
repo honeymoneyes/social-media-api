@@ -18,6 +18,7 @@ import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 @Service
 @RequiredArgsConstructor
 public class FriendShipService {
+
     // -----------------------------------------------------------------------------------------------------------------
 
     private final PersonRepository personRepository;
@@ -130,11 +131,6 @@ public class FriendShipService {
                 .map(Person::getSubscribers)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     // -----------------------------------------------------------------------------------------------------------------
 }
