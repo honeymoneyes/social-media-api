@@ -21,6 +21,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class SecurityControllerAdvice {
+    // -----------------------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(RefreshTokenNotFoundException.class)
     @ResponseStatus(FORBIDDEN)
@@ -34,6 +35,8 @@ public class SecurityControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(DuplicateLoginException.class)
     @ResponseStatus(CONFLICT)
     public ErrorDetails handleDuplicateLoginException(DuplicateLoginException exception) {
@@ -45,6 +48,8 @@ public class SecurityControllerAdvice {
                 .message(exception.getMessage())
                 .build();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(RefreshTokenExpirationException.class)
     @ResponseStatus(UNAUTHORIZED)
@@ -58,6 +63,7 @@ public class SecurityControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(BAD_REQUEST)
@@ -76,6 +82,8 @@ public class SecurityControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorDetails handleMissingRequestHeaderException(MissingRequestHeaderException exception) {
@@ -88,6 +96,8 @@ public class SecurityControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorDetails handleBadCredentialsException(BadCredentialsException exception) {
@@ -99,4 +109,6 @@ public class SecurityControllerAdvice {
                         .format(LocalDateTime.now()))
                 .build();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

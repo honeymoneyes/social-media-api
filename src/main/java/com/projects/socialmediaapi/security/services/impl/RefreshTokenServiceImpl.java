@@ -23,15 +23,21 @@ import static com.projects.socialmediaapi.security.constants.TokenConstants.REFR
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final RefreshTokenRepository refreshTokenRepository;
     private final PersonRepository personRepository;
     @Value("${jwt.refreshExpirationMs}")
     private long refreshTokenDurationMs;
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public RefreshToken createRefreshToken(Long userId) {
@@ -45,6 +51,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         return refreshToken;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private RefreshToken refreshTokenBuild(Long userId) {
         return RefreshToken.builder()
@@ -61,6 +69,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpirationDate().compareTo(Instant.now()) < 0) {
@@ -70,4 +80,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         }
         return token;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

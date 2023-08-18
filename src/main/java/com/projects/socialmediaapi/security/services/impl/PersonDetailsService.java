@@ -15,7 +15,11 @@ import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_
 @RequiredArgsConstructor
 public class PersonDetailsService implements UserDetailsService {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final PersonRepository personRepository;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -25,4 +29,6 @@ public class PersonDetailsService implements UserDetailsService {
 
         return new PersonDetails(person);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

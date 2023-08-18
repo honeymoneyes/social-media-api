@@ -28,8 +28,12 @@ import static com.projects.socialmediaapi.security.constants.AuthConstants.BEARE
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
@@ -58,11 +62,16 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static void setAuthTokenDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authToken) {
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void setAuthTokenDetails(HttpServletRequest request,
+                                            UsernamePasswordAuthenticationToken authToken) {
         authToken.setDetails(
                 new WebAuthenticationDetailsSource()
                         .buildDetails(request));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static UsernamePasswordAuthenticationToken getAuthToken(UserDetails userDetails) {
         return new UsernamePasswordAuthenticationToken(
@@ -70,6 +79,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 userDetails.getPassword(),
                 userDetails.getAuthorities());
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static Optional<String> parseJwt(HttpServletRequest request) {
         String authHeader = request.getHeader(AUTHORIZATION);
@@ -80,4 +91,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         return Optional.empty();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

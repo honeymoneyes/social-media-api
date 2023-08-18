@@ -21,8 +21,11 @@ import static com.projects.socialmediaapi.security.constants.EndpointConstants.*
 @RequiredArgsConstructor
 @RequestMapping(MAIN_AUTH)
 public class AuthController {
+    // -----------------------------------------------------------------------------------------------------------------
 
     private final AuthServiceImpl authServiceImpl;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @PostMapping(SIGN_UP)
     public ResponseEntity<MessageResponse> performRegister(@Valid @RequestBody RegisterRequest request) {
@@ -31,6 +34,8 @@ public class AuthController {
                 .body(authServiceImpl.register(request));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @PostMapping(SIGN_IN)
     public ResponseEntity<JwtResponse> performLogin(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity
@@ -38,9 +43,13 @@ public class AuthController {
                 .body(authServiceImpl.login(request));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @PostMapping(REFRESH)
     public ResponseEntity<TokenRefreshResponse> performRefresh(@Valid @RequestBody TokenRefreshRequest request) {
         return ResponseEntity
                 .ok(authServiceImpl.refresh(request));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

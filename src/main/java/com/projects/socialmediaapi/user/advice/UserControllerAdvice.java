@@ -17,6 +17,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestControllerAdvice
 public class UserControllerAdvice {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(NOT_FOUND)
     public ErrorDetails handleTokenRefreshException(UserNotFoundException exception) {
@@ -30,6 +32,8 @@ public class UserControllerAdvice {
 
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(UserAlreadyExistException.class)
     @ResponseStatus(CONFLICT)
     public ErrorDetails handleUserAlreadyExistException(UserAlreadyExistException exception) {
@@ -42,5 +46,7 @@ public class UserControllerAdvice {
                 .build();
 
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }
 

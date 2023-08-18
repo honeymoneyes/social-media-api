@@ -27,8 +27,12 @@ import static com.projects.socialmediaapi.post.constants.PostConstants.INVALID_F
 @Service
 @RequiredArgsConstructor
 public class ImageService {
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public Image createPostWithImageAndReturnImage(PostRequest request,
                                                    Person person) throws IOException {
@@ -40,7 +44,7 @@ public class ImageService {
         return imageRepository.save(image);
     }
 
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static void isFilepathValid(String fileName) {
         if (fileName.contains("..")) {
@@ -48,7 +52,7 @@ public class ImageService {
         }
     }
 
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static String getFileName(MultipartFile file) {
         return StringUtils
@@ -57,16 +61,7 @@ public class ImageService {
                                 .getOriginalFilename()));
     }
 
-
-
-    public Image updatePostWithImageAndReturnImage(PostRequest request,
-                                                   Post post) throws IOException {
-        String fileName = getFileName(request.getImage());
-        isFilepathValid(fileName);
-        return createImage(request, fileName, post);
-    }
-
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     public ResponseEntity<Resource> showImageByPostId(Long postId) {
         Image image = imageRepository
@@ -79,8 +74,7 @@ public class ImageService {
                 .body(new ByteArrayResource(image.getData()));
     }
 
-
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static Post createPost(PostRequest request, Person person) {
         return Post.builder()
@@ -90,8 +84,7 @@ public class ImageService {
                 .build();
     }
 
-
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static Image createImage(PostRequest request, String fileName, Post post) throws IOException {
         return Image.builder()
@@ -101,4 +94,6 @@ public class ImageService {
                 .post(post)
                 .build();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

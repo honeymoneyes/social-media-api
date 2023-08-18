@@ -15,6 +15,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class PostControllerAdvice {
+    // -----------------------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(UnauthorizedPostDeletedException.class)
     @ResponseStatus(FORBIDDEN)
@@ -28,6 +29,8 @@ public class PostControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(UnauthorizedPostUpdatedException.class)
     @ResponseStatus(FORBIDDEN)
     public ErrorDetails handleUnauthorizedPostUpdatedException(UnauthorizedPostUpdatedException exception) {
@@ -39,6 +42,8 @@ public class PostControllerAdvice {
                         .format(LocalDateTime.now()))
                 .build();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(PostNotFoundException.class)
     @ResponseStatus(NOT_FOUND)
@@ -52,6 +57,8 @@ public class PostControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(ImageNotFoundException.class)
     @ResponseStatus(NOT_FOUND)
     public ErrorDetails handleImageNotFoundException(ImageNotFoundException exception) {
@@ -64,6 +71,8 @@ public class PostControllerAdvice {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(FilePathInvalidException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorDetails handleFilePathInvalidException(FilePathInvalidException exception) {
@@ -75,4 +84,6 @@ public class PostControllerAdvice {
                         .format(LocalDateTime.now()))
                 .build();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

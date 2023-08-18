@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapUtils {
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static Map<String, Object> toClaims(Object obj) {
         Map<String, Object> map = new HashMap<>();
@@ -18,6 +19,8 @@ public class MapUtils {
         return map;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static void addFieldsToMap(Object obj, Map<String, Object> map, Field field) {
         field.setAccessible(true);
         try {
@@ -28,4 +31,6 @@ public class MapUtils {
             field.setAccessible(false);
         }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

@@ -19,6 +19,9 @@ import static com.projects.socialmediaapi.security.constants.TokenConstants.*;
 
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
@@ -44,4 +47,6 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         ObjectMapper objectMapper = new ObjectMapper();
         response.getWriter().write(objectMapper.writeValueAsString(errorDetails));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

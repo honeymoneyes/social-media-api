@@ -22,10 +22,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    // -----------------------------------------------------------------------------------------------------------------
 
     private final JwtFilter jwtFilter;
     private final UserDetailsService userDetailsService;
     private final AuthEntryPointJwt authEntryPointJwt;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,6 +48,8 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -53,14 +58,19 @@ public class WebSecurityConfig {
         return provider;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 }

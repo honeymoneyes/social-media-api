@@ -1,6 +1,9 @@
 package com.projects.socialmediaapi.post.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.projects.socialmediaapi.user.models.Person;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,10 +15,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +25,10 @@ public class Post {
     @JoinColumn(
             name = "post_id",
             referencedColumnName = "id")
+    @JsonBackReference
     private Person person;
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Image image;
 }
