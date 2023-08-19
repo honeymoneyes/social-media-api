@@ -8,5 +8,5 @@ public class EndpointConstants {
 
     public static final String SIGN_IN = "/sign-in";
 
-    public static final String REFRESH = "/refresh-token";
+    public static final String REFRESH_TOKEN = "/refresh-token";
 }

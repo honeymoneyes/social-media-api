@@ -1,6 +1,6 @@
 package com.projects.socialmediaapi.auth.controllers;
 
-import com.projects.socialmediaapi.user.services.FriendShipService;
+import com.projects.socialmediaapi.user.services.FriendshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
 
-    private final FriendShipService friendShipService;
+    private final FriendshipService friendShipService;
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -44,8 +44,22 @@ public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
 
     @PostMapping("/accept/{userId}")
-    public ResponseEntity<?> performAcceptFriend(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.acceptFriend(id));
+    public ResponseEntity<?> performAcceptRequest(@PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipService.acceptRequest(id));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @PostMapping("/reject/{userId}")
+    public ResponseEntity<?> performRejectRequest(@PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipService.rejectRequest(id));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @PostMapping("/remove/{userId}")
+    public ResponseEntity<?> performRemoveFriend(@PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipService.removeFriend(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

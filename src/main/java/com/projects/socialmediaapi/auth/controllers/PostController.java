@@ -43,7 +43,7 @@ public class PostController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping(CREATE)
+    @PostMapping(CREATE_POST)
     public ResponseEntity<UploadPostResponse> performCreatePost(@Valid
                                                                 @ModelAttribute
                                                                 PostRequest request) throws IOException {
@@ -52,7 +52,7 @@ public class PostController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PatchMapping(UPDATE)
+    @PatchMapping(UPDATE_POST)
     public ResponseEntity<UpdatePostResponse> performUpdatePost(@Valid
                                                                 @ModelAttribute PostRequest request,
                                                                 @PathVariable("postId") Long id) throws IOException {
@@ -61,7 +61,7 @@ public class PostController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @DeleteMapping(DELETE)
+    @DeleteMapping(DELETE_POST)
     public ResponseEntity<DeletePostResponse> performDeletePost(@PathVariable("postId") Long id) {
         return ResponseEntity.ok(postService.deletePost(id));
     }
