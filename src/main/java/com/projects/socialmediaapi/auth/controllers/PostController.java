@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-import static com.projects.socialmediaapi.user.constants.EndpointConstants.*;
+import static com.projects.socialmediaapi.user.constants.PostEndpointConstants.*;
 
 @RestController
-@RequestMapping(MAIN)
+@RequestMapping(MAIN_POSTS)
 @RequiredArgsConstructor
 public class PostController {
 

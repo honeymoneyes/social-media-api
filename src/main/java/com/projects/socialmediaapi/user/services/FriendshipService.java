@@ -11,6 +11,7 @@ import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Set;
@@ -30,6 +31,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Transactional
     public FriendShipResponse follow(Long receiverId) {
         Result result = getLoggedUserAndOtherUser(receiverId);
 
@@ -61,6 +63,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Transactional
     public FriendShipResponse unfollow(Long userId) {
         Result result = getLoggedUserAndOtherUser(userId);
 
@@ -97,15 +100,9 @@ public class FriendshipService {
                 .build();
     }
 
-    private static boolean isAreUsersFriends(Result result) {
-        return result.loggedInPerson
-                .getFriends()
-                .stream()
-                .anyMatch(friend -> Objects.equals(friend.getId(), result.otherPerson.getId()));
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Transactional
     public FriendShipResponse acceptRequest(Long subscriberId) {
 
         Result result = getLoggedUserAndOtherUser(subscriberId);
@@ -142,6 +139,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Transactional
     public FriendShipResponse rejectRequest(Long senderId) {
         Result result = getLoggedUserAndOtherUser(senderId);
 
@@ -159,6 +157,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Transactional
     public FriendShipResponse removeFriend(Long userId) {
         Result result = getLoggedUserAndOtherUser(userId);
 
@@ -261,6 +260,15 @@ public class FriendshipService {
     // -----------------------------------------------------------------------------------------------------------------
 
     private record Result(Person loggedInPerson, Person otherPerson) {
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static boolean isAreUsersFriends(Result result) {
+        return result.loggedInPerson
+                .getFriends()
+                .stream()
+                .anyMatch(friend -> Objects.equals(friend.getId(), result.otherPerson.getId()));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

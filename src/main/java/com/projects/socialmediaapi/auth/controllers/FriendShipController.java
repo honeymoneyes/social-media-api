@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+import static com.projects.socialmediaapi.user.constants.FriendEndpointConstants.*;
+
 @RestController
-@RequestMapping("/user")
+@RequestMapping(MAIN_FRIENDS)
 @RequiredArgsConstructor
 public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
@@ -19,49 +21,49 @@ public class FriendShipController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("/friends/{userId}")
+    @GetMapping(SHOW_FRIENDS)
     public ResponseEntity<Set<PersonResponse>> performShowFriends(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.showFriends(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("/subscribers/{userId}")
+    @GetMapping(SHOW_SUBSCRIBERS)
     public ResponseEntity<Set<PersonResponse>> performShowSubscribers(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.showSubscribers(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/follow/{userId}")
+    @PostMapping(FOLLOW)
     public ResponseEntity<FriendShipResponse> performFollow(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.follow(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/unfollow/{userId}")
+    @PostMapping(UNFOLLOW)
     public ResponseEntity<FriendShipResponse> performUnfollow(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.unfollow(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/accept/{userId}")
+    @PostMapping(ACCEPT_REQUEST_FRIEND)
     public ResponseEntity<FriendShipResponse> performAcceptRequest(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.acceptRequest(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/reject/{userId}")
+    @PostMapping(REJECT_REQUEST_FRIEND)
     public ResponseEntity<FriendShipResponse> performRejectRequest(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.rejectRequest(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @DeleteMapping("/remove/{userId}")
+    @DeleteMapping(REMOVE_FRIEND)
     public ResponseEntity<FriendShipResponse> performRemoveFriend(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.removeFriend(id));
     }

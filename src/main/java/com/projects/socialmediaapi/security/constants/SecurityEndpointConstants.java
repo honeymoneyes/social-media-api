@@ -1,6 +1,6 @@
 package com.projects.socialmediaapi.security.constants;
 
-public class EndpointConstants {
+public class SecurityEndpointConstants {
 
     public static final String MAIN_AUTH = "/auth";
 

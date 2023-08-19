@@ -1,8 +1,8 @@
 package com.projects.socialmediaapi.user.constants;
 
-public class EndpointConstants {
+public class PostEndpointConstants {
 
-    public static final String MAIN = "/user";
+    public static final String MAIN_POSTS = "/user";
 
     public static final String CREATE_POST = "/posts/create";
 

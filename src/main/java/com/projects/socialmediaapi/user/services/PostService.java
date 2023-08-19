@@ -59,7 +59,6 @@ public class PostService {
                 fileDownloadUri);
     }
 
-
     // UPDATE ----------------------------------------------------------------------------------------------------------
 
     @Transactional
@@ -134,9 +133,7 @@ public class PostService {
                 .build();
     }
 
-
     // -----------------------------------------------------------------------------------------------------------------
-
 
     private Person getAuthenticatePerson() {
         PersonDetails personDetails = (PersonDetails) SecurityContextHolder
@@ -149,7 +146,6 @@ public class PostService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-
     private static String getFileDownloadUri(Image image) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
@@ -158,7 +154,6 @@ public class PostService {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
 
     private static UploadPostResponse getUploadPostResponse(PostRequest request,
                                                             Image image,

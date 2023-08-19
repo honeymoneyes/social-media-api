@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,7 @@ public class ImageService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Transactional
     public Image createPostWithImageAndReturnImage(PostRequest request,
                                                    Person person) throws IOException {
         String fileName = getFileName(request.getImage());

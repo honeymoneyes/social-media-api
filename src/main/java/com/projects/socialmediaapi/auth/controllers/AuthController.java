@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.projects.socialmediaapi.security.constants.EndpointConstants.*;
+import static com.projects.socialmediaapi.security.constants.SecurityEndpointConstants.*;
 
 @RestController
 @RequiredArgsConstructor
