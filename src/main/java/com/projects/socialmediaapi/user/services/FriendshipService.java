@@ -5,6 +5,7 @@ import com.projects.socialmediaapi.user.exceptions.*;
 import com.projects.socialmediaapi.user.models.FriendshipRequest;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
+import com.projects.socialmediaapi.user.payload.responses.PersonResponse;
 import com.projects.socialmediaapi.user.repositories.FriendshipRepository;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 import static com.projects.socialmediaapi.user.enums.RequestStatus.*;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +45,7 @@ public class FriendshipService {
                 .findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
-        isNotSelf(loggedInPerson, otherPerson);
+        areIdsFromSameUser(loggedInPerson, otherPerson);
 
         if (!otherPerson.getSubscribers().contains(loggedInPerson)) {
             otherPerson.getSubscribers().add(loggedInPerson);
@@ -74,6 +76,8 @@ public class FriendshipService {
 
     public FriendShipResponse unfollow(Long userId) {
         Result result = getLoggedUserAndOtherUser(userId);
+
+        areIdsFromSameUser(result.loggedInPerson, result.otherPerson);
 
         if (result.otherPerson().getSubscribers().contains(result.loggedInPerson())) {
             result.otherPerson().getSubscribers().remove(result.loggedInPerson());
@@ -127,7 +131,7 @@ public class FriendshipService {
     public FriendShipResponse rejectRequest(Long senderId) {
         Result result = getLoggedUserAndOtherUser(senderId);
 
-        isNotSelf(result.loggedInPerson, result.otherPerson);
+        areIdsFromSameUser(result.loggedInPerson, result.otherPerson);
 
         if (result.loggedInPerson.getSubscribers().contains(result.otherPerson)) {
             rejectRequestOrRemoveFriend(result);
@@ -144,7 +148,7 @@ public class FriendshipService {
     public FriendShipResponse removeFriend(Long userId) {
         Result result = getLoggedUserAndOtherUser(userId);
 
-        isNotSelf(result.loggedInPerson, result.otherPerson);
+        areIdsFromSameUser(result.loggedInPerson, result.otherPerson);
 
         if(result.loggedInPerson.getFriends().contains(result.otherPerson)) {
             result.loggedInPerson.getFriends().remove(result.otherPerson);
@@ -169,20 +173,32 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public Set<Person> showFriends(Long userId) {
+    public Set<PersonResponse> showFriends(Long userId) {
         return personRepository
                 .findById(userId)
                 .map(Person::getFriends)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND))
+                .stream()
+                .map(friend -> PersonResponse.builder()
+                        .id(friend.getId())
+                        .username(friend.getUsername())
+                        .build())
+                .collect(toSet());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public Set<Person> showSubscribers(Long userId) {
+    public Set<PersonResponse> showSubscribers(Long userId) {
         return personRepository
                 .findById(userId)
                 .map(Person::getSubscribers)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND))
+                .stream()
+                .map(subscriber -> PersonResponse.builder()
+                        .id(subscriber.getId())
+                        .username(subscriber.getUsername())
+                        .build())
+                .collect(toSet());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -210,7 +226,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static void isNotSelf(Person loggedInPerson, Person otherPerson) {
+    private static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
         if(Objects.equals(loggedInPerson.getId(), otherPerson.getId())) {
             throw new SelfActionException(SELF_ACTION);
         }

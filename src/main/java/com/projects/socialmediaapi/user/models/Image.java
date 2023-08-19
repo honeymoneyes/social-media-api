@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "id")
-@ToString
+@ToString(exclude = {"post"})
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
