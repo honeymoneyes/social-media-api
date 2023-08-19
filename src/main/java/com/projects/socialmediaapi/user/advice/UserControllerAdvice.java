@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class UserControllerAdvice {
@@ -113,6 +112,36 @@ public class UserControllerAdvice {
         return ErrorDetails.builder()
                 .status(NOT_FOUND.value())
                 .error("FRIENDSHIP_REQUEST_NOT_FOUND")
+                .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
+                        .format(LocalDateTime.now()))
+                .message(exception.getMessage())
+                .build();
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(MessageSendingNotAllowedException.class)
+    @ResponseStatus(METHOD_NOT_ALLOWED)
+    public ErrorDetails handleMessageSendingNotAllowedException(MessageSendingNotAllowedException exception) {
+        return ErrorDetails.builder()
+                .status(METHOD_NOT_ALLOWED.value())
+                .error("MESSAGE_NOT_ALLOWED_ERROR")
+                .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
+                        .format(LocalDateTime.now()))
+                .message(exception.getMessage())
+                .build();
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(ChatNotAllowedException.class)
+    @ResponseStatus(METHOD_NOT_ALLOWED)
+    public ErrorDetails handleChatNotAllowedException(ChatNotAllowedException exception) {
+        return ErrorDetails.builder()
+                .status(METHOD_NOT_ALLOWED.value())
+                .error("CHAT_NOT_ALLOWED_ERROR")
                 .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
                         .format(LocalDateTime.now()))
                 .message(exception.getMessage())

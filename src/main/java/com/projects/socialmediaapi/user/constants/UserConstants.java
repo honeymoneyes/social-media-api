@@ -18,4 +18,12 @@ public class UserConstants {
     public static final String SELF_ACTION = "You can't action to yourself";
 
     public static final String USERS_ARE_FRIENDS = "Users already are friends!";
+
+    public static final String MESSAGE_NOT_ALLOWED = "You cannot send a message to a user that is not yours friend";
+
+    public static final String MESSAGE_SENT = "Message sent";
+
+    public static final String CHAT_NOT_ALLOWED = "You must be friends!";
+
+    public static final String CHAT_NOT_FOUND = "Chat is not found!";
 }

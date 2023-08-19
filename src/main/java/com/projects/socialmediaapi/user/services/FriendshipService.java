@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
-import static com.projects.socialmediaapi.user.enums.ContactType.FRIENDS;
 import static com.projects.socialmediaapi.user.enums.RequestStatus.*;
 import static java.util.stream.Collectors.toSet;
 
@@ -220,7 +219,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private Result getLoggedUserAndOtherUser(Long userId) {
+    public Result getLoggedUserAndOtherUser(Long userId) {
         PersonDetails personDetails = (PersonDetails) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -238,7 +237,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
+    public static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
         if (Objects.equals(loggedInPerson.getId(), otherPerson.getId())) {
             throw new SelfActionException(SELF_ACTION);
         }
@@ -261,12 +260,12 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private record Result(Person loggedInPerson, Person otherPerson) {
+    public record Result(Person loggedInPerson, Person otherPerson) {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static boolean isAreUsersFriends(Result result) {
+    public static boolean isAreUsersFriends(Result result) {
         return result.loggedInPerson
                 .getFriends()
                 .stream()
