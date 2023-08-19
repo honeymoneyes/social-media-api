@@ -13,10 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
+import static com.projects.socialmediaapi.user.enums.ContactType.FRIENDS;
 import static com.projects.socialmediaapi.user.enums.RequestStatus.*;
 import static java.util.stream.Collectors.toSet;
 
@@ -189,31 +191,31 @@ public class FriendshipService {
     // -----------------------------------------------------------------------------------------------------------------
 
     public Set<PersonResponse> showFriends(Long userId) {
-        return personRepository
-                .findById(userId)
-                .map(Person::getFriends)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND))
-                .stream()
-                .map(friend -> PersonResponse.builder()
-                        .id(friend.getId())
-                        .username(friend.getUsername())
-                        .build())
-                .collect(toSet());
+        Set<PersonResponse> emptySet = new HashSet<>();
+        emptySet.add(PersonResponse.builder()
+                .id(0L)
+                .username("The user has no friends")
+                .build());
+
+        Set<Person> friends = getSetFriends(userId);
+        Set<PersonResponse> friendsResponses = getResponses(friends);
+
+        return !friendsResponses.isEmpty() ? friendsResponses : emptySet;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public Set<PersonResponse> showSubscribers(Long userId) {
-        return personRepository
-                .findById(userId)
-                .map(Person::getSubscribers)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND))
-                .stream()
-                .map(subscriber -> PersonResponse.builder()
-                        .id(subscriber.getId())
-                        .username(subscriber.getUsername())
-                        .build())
-                .collect(toSet());
+        Set<PersonResponse> emptySet = new HashSet<>();
+        emptySet.add(PersonResponse.builder()
+                .id(0L)
+                .username("The user has no subscribers")
+                .build());
+
+        Set<Person> subscribers = getSetSubscribers(userId);
+        Set<PersonResponse> friendsResponses = getResponses(subscribers);
+
+        return !friendsResponses.isEmpty() ? friendsResponses : emptySet;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -269,6 +271,35 @@ public class FriendshipService {
                 .getFriends()
                 .stream()
                 .anyMatch(friend -> Objects.equals(friend.getId(), result.otherPerson.getId()));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Set<Person> getSetFriends(Long userId) {
+        return personRepository
+                .findById(userId)
+                .map(Person::getFriends)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Set<Person> getSetSubscribers(Long userId) {
+        return personRepository
+                .findById(userId)
+                .map(Person::getSubscribers)
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static Set<PersonResponse> getResponses(Set<Person> friends) {
+        return friends.stream()
+                .map(friend -> PersonResponse.builder()
+                        .id(friend.getId())
+                        .username(friend.getUsername())
+                        .build())
+                .collect(toSet());
     }
 
     // -----------------------------------------------------------------------------------------------------------------

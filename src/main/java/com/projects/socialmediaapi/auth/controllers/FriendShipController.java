@@ -23,14 +23,14 @@ public class FriendShipController {
 
     @GetMapping(SHOW_FRIENDS)
     public ResponseEntity<Set<PersonResponse>> performShowFriends(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.showFriends(id));
+        return ResponseEntity.ok().body(friendShipService.showFriends(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     @GetMapping(SHOW_SUBSCRIBERS)
     public ResponseEntity<Set<PersonResponse>> performShowSubscribers(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.showSubscribers(id));
+        return ResponseEntity.ok().body(friendShipService.showSubscribers(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
