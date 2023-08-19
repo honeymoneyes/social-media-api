@@ -2,11 +2,11 @@ package com.projects.socialmediaapi.user.constants;
 
 public class PostConstants {
 
-    public static final String CREATE_SUCCESS = "Post successfully created!";
+    public static final String CREATE_SUCCESS = "Post is successfully created!";
 
-    public static final String POST_NOT_FOUND = "Post not found!";
+    public static final String POST_NOT_FOUND = "Post is not found!";
 
-    public static final String IMAGE_NOT_FOUND = "Image not found!";
+    public static final String IMAGE_NOT_FOUND = "Image is not found!";
 
     public static final String INVALID_FILE_PATH = "Sorry! Filename contains invalid path sequence ";
 

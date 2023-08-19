@@ -91,5 +91,35 @@ public class UserControllerAdvice {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(UsersAlreadyFriendsException.class)
+    @ResponseStatus(CONFLICT)
+    public ErrorDetails handleUsersAlreadyFriendsException(UsersAlreadyFriendsException exception) {
+        return ErrorDetails.builder()
+                .status(CONFLICT.value())
+                .error("USERS_ALREADY_FRIENDS")
+                .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
+                        .format(LocalDateTime.now()))
+                .message(exception.getMessage())
+                .build();
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(FriendshipRequestNotFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ErrorDetails handleFriendshipRequestNotFoundException(FriendshipRequestNotFoundException exception) {
+        return ErrorDetails.builder()
+                .status(NOT_FOUND.value())
+                .error("FRIENDSHIP_REQUEST_NOT_FOUND")
+                .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
+                        .format(LocalDateTime.now()))
+                .message(exception.getMessage())
+                .build();
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }
 
