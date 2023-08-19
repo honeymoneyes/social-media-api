@@ -70,8 +70,10 @@ public class FriendshipService {
                 .findBySenderAndReceiver(result.loggedInPerson, result.otherPerson)
                 .orElseThrow(() -> new FriendshipRequestNotFoundException(FRIENDSHIP_NOT_FOUND));
 
+        boolean areUsersFriends = isAreUsersFriends(result);
+
         if (result.otherPerson.getSubscribers().contains(result.loggedInPerson)) {
-            if (areUsersFriends(result.loggedInPerson, result.otherPerson)) {
+            if (areUsersFriends) {
                 result.otherPerson.getFriends().remove(result.loggedInPerson);
                 result.otherPerson.getSubscribers().remove(result.loggedInPerson);
                 result.loggedInPerson.getFriends().remove(result.otherPerson);
@@ -93,6 +95,13 @@ public class FriendshipService {
         return FriendShipResponse.builder()
                 .message(String.format("You unsubscribed from %s", result.otherPerson().getUsername()))
                 .build();
+    }
+
+    private static boolean isAreUsersFriends(Result result) {
+        return result.loggedInPerson
+                .getFriends()
+                .stream()
+                .anyMatch(friend -> Objects.equals(friend.getId(), result.otherPerson.getId()));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -247,12 +256,6 @@ public class FriendshipService {
         } else {
             throw new FriendshipRequestNotFoundException(FRIENDSHIP_REQUEST_NOT_FOUND);
         }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public boolean areUsersFriends(Person loggedInPerson, Person otherPerson) {
-        return friendshipRepository.areUsersFriends(loggedInPerson, otherPerson);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
