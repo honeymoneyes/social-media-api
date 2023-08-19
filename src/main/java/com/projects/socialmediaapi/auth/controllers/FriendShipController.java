@@ -61,7 +61,7 @@ public class FriendShipController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/remove/{userId}")
+    @DeleteMapping("/remove/{userId}")
     public ResponseEntity<FriendShipResponse> performRemoveFriend(@PathVariable("userId") Long id) {
         return ResponseEntity.ok(friendShipService.removeFriend(id));
     }

@@ -13,4 +13,11 @@ public interface FriendshipRepository extends JpaRepository<FriendshipRequest, L
     @Query(value = "SELECT fr FROM FriendshipRequest fr WHERE (fr.sender =?1 AND fr.receiver = " +
                    "?2) OR (fr.sender =?2 AND fr.receiver =?1)")
     Optional<FriendshipRequest> findBySenderAndReceiver(Person sender, Person receiver);
+
+    @Query(value = "SELECT CASE WHEN " +
+                   "(fr.sender = ?1 AND fr.receiver = ?2) OR " +
+                   "(fr.sender = ?2 AND fr.receiver = ?1) " +
+                   "THEN true ELSE false END " +
+                   "FROM FriendshipRequest fr")
+    boolean areUsersFriends(Person sender, Person receiver);
 }
