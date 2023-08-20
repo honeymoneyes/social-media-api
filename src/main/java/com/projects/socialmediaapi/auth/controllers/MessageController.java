@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class MessageController {
     }
 
     @GetMapping("/chat/{userId}")
-    public ResponseEntity<?> performGetChat(@PathVariable("userId") Long userId) {
+    public ResponseEntity<List<TextMessageResponse>> performGetChat(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(messageService.getChat(userId));
     }
 }

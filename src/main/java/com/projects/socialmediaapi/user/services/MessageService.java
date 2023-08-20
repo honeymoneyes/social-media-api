@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import static com.projects.socialmediaapi.security.constants.TokenConstants.DATE_TIME_FORMAT;
@@ -45,7 +44,7 @@ public class MessageService {
                     .sender(result.loggedInPerson())
                     .receiver(result.otherPerson())
                     .text(request.getText())
-                    .timestamp(getTimestamp())
+                    .timestamp(getTimestamp(LocalDateTime.now()))
                     .build();
 
             messageRepository.save(message);
@@ -54,7 +53,7 @@ public class MessageService {
                 .senderUsername(result.loggedInPerson().getUsername())
                 .receiverUsername(result.otherPerson().getUsername())
                 .text(request.getText())
-                .timestamp(getTimestamp())
+                .timestamp(getTimestamp(LocalDateTime.now()))
                 .build();
     }
 
@@ -84,7 +83,7 @@ public class MessageService {
                 .anyMatch(friend -> Objects.equals(friend.getId(), otherPerson.getId()));
     }
 
-    public Object getChat(Long userId) {
+    public List<TextMessageResponse> getChat(Long userId) {
         Result result = getLoggedInPersonAndOtherPerson(userId);
 
         areIdsFromSameUser(result.loggedInPerson(), result.otherPerson());
@@ -105,22 +104,21 @@ public class MessageService {
                         .senderUsername(message.getSender().getUsername())
                         .receiverUsername(message.getReceiver().getUsername())
                         .text(message.getText())
-                        .timestamp(getTimestamp())
+                        .timestamp(getTimestamp(message.getTimestamp()))
                         .build())
                 .toList();
     }
 
-    private static LocalDateTime getTimestamp() {
-        return LocalDateTime.parse(LocalDateTime.now()
+    private static LocalDateTime getTimestamp(LocalDateTime time) {
+        return LocalDateTime.parse(time
                         .format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)),
                 DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
     }
 
     private List<Message> getListMessagesOfPeople(Result result) {
-        return messageRepository.findBySenderAndReceiverOrReceiverAndSenderOrderByTimestamp(
+        return messageRepository.findChat(
                 result.loggedInPerson,
-                result.otherPerson,
-                result.otherPerson,
-                result.loggedInPerson).orElseThrow(() -> new ChatNotFoundException(CHAT_NOT_FOUND));
+                result.otherPerson)
+                .orElseThrow(() -> new ChatNotFoundException(CHAT_NOT_FOUND));
     }
 }
