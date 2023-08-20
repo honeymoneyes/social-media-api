@@ -15,7 +15,9 @@ public class UserConstants {
 
     public static final String USER_ALREADY_EXIST = "User is already exist!";
 
-    public static final String SUBSCRIBER_ALREADY_EXIST = "Subscriber is already subscribed!";
+    public static final String SUBSCRIBER_ALREADY_EXIST = "You're already subscribed to this person!";
+
+    public static final String YOU_ARE_FRIENDS = "You're friends!";
 
     public static final String SELF_ACTION = "You can't action to yourself";
 

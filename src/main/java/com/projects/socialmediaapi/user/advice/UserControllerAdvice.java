@@ -101,5 +101,13 @@ public class UserControllerAdvice {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(FriendAlreadyExistException.class)
+    @ResponseStatus(CONFLICT)
+    public ErrorDetails handleFriendAlreadyExistException(FriendAlreadyExistException exception) {
+        return getErrorDetails(CONFLICT, "YOU_ARE_FRIENDS", exception);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }
 
