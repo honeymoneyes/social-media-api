@@ -41,20 +41,19 @@ public class FriendshipService {
 
         areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
 
-        if (!isLoggedInPersonSubscriberOfOtherPerson(result)) {
-            subscribersOfOtherPerson(result).add(loggedInPerson(result));
-        } else {
-            if (!areUsersFriends(result)) {
-                throw new FriendAlreadyExistException(YOU_ARE_FRIENDS);
-            } else {
-                throw new SubscriberAlreadyExistException(SUBSCRIBER_ALREADY_EXIST);
+        if (!areUsersFriends(result)) { // Если не друзья
+            if (isOtherPersonSubscriberOfLoggedInPerson(result)) { // Если другой пользователь мой подписчик
+                acceptRequest(receiverId); // Организовать дружбу
+            } else { // Если другой пользователь не мой подписчик
+                if (!isLoggedInPersonSubscriberOfOtherPerson(result)) { // Если я не подписчик второго пользователя
+                    subscribersOfOtherPerson(result).add(loggedInPerson(result)); // Добавиться в подписчики к нему
+                    createFriendshipAndSave(result); // Отправить запрос подписки
+                } else { // Если я подписчик второго пользователя
+                    throw new SubscriberAlreadyExistException(SUBSCRIBER_ALREADY_EXIST); // Я уже подписан на него
+                }
             }
-        }
-
-        if (!isOtherPersonSubscriberOfLoggedInPerson(result)) {
-            createFriendshipAndSave(result);
-        } else {
-            acceptRequest(receiverId);
+        } else { // Если друзья
+            throw new FriendAlreadyExistException(YOU_ARE_FRIENDS);
         }
 
         saveLoggedInPersonAndOtherPerson(result);
@@ -116,7 +115,7 @@ public class FriendshipService {
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
-        
+
         setFriendshipStatus(friendship, ACCEPTED);
 
         saveLoggedInPersonAndOtherPerson(result);
@@ -156,7 +155,7 @@ public class FriendshipService {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    
+
     @Transactional
     public FriendShipResponse removeFriend(Long userId) {
         UserInteractionService.Result result = userInteractionService.getLoggedUserAndOtherUser(userId);
