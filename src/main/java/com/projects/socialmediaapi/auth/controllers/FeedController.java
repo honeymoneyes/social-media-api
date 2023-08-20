@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.projects.socialmediaapi.user.constants.FeedEndpointConstants.MAIN_FEED;
+import static com.projects.socialmediaapi.user.constants.FeedEndpointConstants.SHOW_FEED;
+
 @RestController
-@RequestMapping("/user")
+@RequestMapping(MAIN_FEED)
 @RequiredArgsConstructor
 public class FeedController {
     // -----------------------------------------------------------------------------------------------------------------
@@ -19,7 +22,7 @@ public class FeedController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("/feed")
+    @GetMapping(SHOW_FEED)
     public ResponseEntity<PageableResponse> performSubscribersFeed(@RequestParam(value = "page", required = false)
                                                                        Long page,
                                                                    @RequestParam(value = "posts_per_page", required =

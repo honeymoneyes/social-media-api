@@ -30,8 +30,7 @@ public class AuthController {
     @PostMapping(SIGN_UP)
     public ResponseEntity<MessageResponse> performRegister(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity
-                .status(201)
-                .body(authServiceImpl.register(request));
+                .ok(authServiceImpl.register(request));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -39,8 +38,7 @@ public class AuthController {
     @PostMapping(SIGN_IN)
     public ResponseEntity<JwtResponse> performLogin(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity
-                .status(200)
-                .body(authServiceImpl.login(request));
+                .ok(authServiceImpl.login(request));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -6,11 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-
-import static com.projects.socialmediaapi.security.constants.TokenConstants.DATE_TIME_FORMAT;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getErrorDetails;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
@@ -20,13 +16,7 @@ public class PostControllerAdvice {
     @ExceptionHandler(UnauthorizedPostDeletedException.class)
     @ResponseStatus(FORBIDDEN)
     public ErrorDetails handleUnauthorizedPostDeletedException(UnauthorizedPostDeletedException exception) {
-        return ErrorDetails.builder()
-                .status(FORBIDDEN.value())
-                .error("POST_CANNOT_DELETE")
-                .message(exception.getMessage())
-                .timestamp(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH)
-                        .format(LocalDateTime.now()))
-                .build();
+        return getErrorDetails(FORBIDDEN, "POST_CANNOT_DELETE", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -34,13 +24,7 @@ public class PostControllerAdvice {
     @ExceptionHandler(UnauthorizedPostUpdatedException.class)
     @ResponseStatus(FORBIDDEN)
     public ErrorDetails handleUnauthorizedPostUpdatedException(UnauthorizedPostUpdatedException exception) {
-        return ErrorDetails.builder()
-                .status(FORBIDDEN.value())
-                .error("POST_CANNOT_UPDATE")
-                .message(exception.getMessage())
-                .timestamp(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH)
-                        .format(LocalDateTime.now()))
-                .build();
+        return getErrorDetails(FORBIDDEN, "POST_CANNOT_UPDATE", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -48,13 +32,7 @@ public class PostControllerAdvice {
     @ExceptionHandler(PostNotFoundException.class)
     @ResponseStatus(NOT_FOUND)
     public ErrorDetails handlePostNotFoundException(PostNotFoundException exception) {
-        return ErrorDetails.builder()
-                .status(NOT_FOUND.value())
-                .error("POST_NOT_FOUND")
-                .message(exception.getMessage())
-                .timestamp(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH)
-                        .format(LocalDateTime.now()))
-                .build();
+        return getErrorDetails(NOT_FOUND, "POST_NOT_FOUND", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -62,13 +40,7 @@ public class PostControllerAdvice {
     @ExceptionHandler(ImageNotFoundException.class)
     @ResponseStatus(NOT_FOUND)
     public ErrorDetails handleImageNotFoundException(ImageNotFoundException exception) {
-        return ErrorDetails.builder()
-                .status(NOT_FOUND.value())
-                .error("IMAGE_NOT_FOUND")
-                .message(exception.getMessage())
-                .timestamp(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH)
-                        .format(LocalDateTime.now()))
-                .build();
+        return getErrorDetails(NOT_FOUND, "IMAGE_NOT_FOUND", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -76,13 +48,7 @@ public class PostControllerAdvice {
     @ExceptionHandler(FilePathInvalidException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorDetails handleFilePathInvalidException(FilePathInvalidException exception) {
-        return ErrorDetails.builder()
-                .status(BAD_REQUEST.value())
-                .error("FILE_PATH_INVALID")
-                .message(exception.getMessage())
-                .timestamp(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH)
-                        .format(LocalDateTime.now()))
-                .build();
+        return getErrorDetails(BAD_REQUEST, "FILE_PATH_INVALID", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

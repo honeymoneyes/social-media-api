@@ -48,6 +48,19 @@ public class FeedService {
         List<FeedResponse> latestPostFeedResponse =
                 getLatestPostFeedResponse(sortListLatestPostSubscriptions);
 
+        PageImpl<FeedResponse> content = getPage(page, postsPerPage, sortListLatestPostSubscriptions, latestPostFeedResponse);
+
+        return PageableResponse.builder()
+                .totalPages(content.getTotalPages())
+                .feed(content.getContent())
+                .totalItems(content.getTotalElements())
+                .currentPage(content.getNumber())
+                .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private PageImpl<FeedResponse> getPage(Long page, Long postsPerPage, List<Post> sortListLatestPostSubscriptions, List<FeedResponse> latestPostFeedResponse) {
         PageRequest pageable = PageRequest.of(page.intValue(), postsPerPage.intValue());
 
         int totalPages = getTotalPages(postsPerPage, sortListLatestPostSubscriptions.size());
@@ -61,15 +74,8 @@ public class FeedService {
 
         List<FeedResponse> feedResponses = latestPostFeedResponse.subList(fromIndex, toIndex);
 
-        PageImpl<FeedResponse> content = new PageImpl<>(feedResponses, pageable,
+        return new PageImpl<>(feedResponses, pageable,
                 latestPostFeedResponse.size());
-
-        return PageableResponse.builder()
-                .totalPages(content.getTotalPages())
-                .feed(content.getContent())
-                .totalItems(content.getTotalElements())
-                .currentPage(content.getNumber())
-                .build();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

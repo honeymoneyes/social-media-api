@@ -5,6 +5,7 @@ import com.projects.socialmediaapi.security.exceptions.RefreshTokenExpirationExc
 import com.projects.socialmediaapi.security.models.RefreshToken;
 import com.projects.socialmediaapi.security.repositories.RefreshTokenRepository;
 import com.projects.socialmediaapi.security.services.RefreshTokenService;
+import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static com.projects.socialmediaapi.security.constants.AuthConstants.LOGIN_ALREADY_COMPLETED;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.REFRESH_TOKEN_EXPIRED;
+import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +60,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return RefreshToken.builder()
                 .person((personRepository
                         .findById(userId)
-                        .get()))
+                        .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND))))
                 .expirationDate(ZonedDateTime
                         .now()
                         .toInstant()
