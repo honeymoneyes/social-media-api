@@ -93,5 +93,13 @@ public class UserControllerAdvice {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(FriendNotFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ErrorDetails handleFriendNotFoundException(FriendNotFoundException exception) {
+        return getErrorDetails(NOT_FOUND, "FRIEND_NOT_FOUND", exception);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }
 

@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.projects.socialmediaapi.user.constants.MessageEndpointConstants.*;
+
 @RestController
-@RequestMapping("/user")
+@RequestMapping(MAIN_MESSAGE)
 @RequiredArgsConstructor
 public class MessageController {
 
@@ -20,7 +22,7 @@ public class MessageController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @PostMapping("/message/{userId}")
+    @PostMapping(SEND_MESSAGE)
     public ResponseEntity<TextMessageResponse> performSendMessage(@PathVariable("userId") Long id,
                                                                   @RequestBody TextMessageRequest request) {
         return ResponseEntity.ok(messageService.sendMessage(id, request));
@@ -28,7 +30,7 @@ public class MessageController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("/chat/{userId}")
+    @GetMapping(GET_CHAT)
     public ResponseEntity<List<TextMessageResponse>> performGetChat(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(messageService.getChat(userId));
     }

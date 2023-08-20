@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.projects.socialmediaapi.user.constants.UserConstants.POST_PER_PAGE_IS_NOT_POSITIVE;
 import static com.projects.socialmediaapi.user.constants.UserConstants.SUBSCRIPTIONS_NOT_FOUND;
 import static com.projects.socialmediaapi.user.enums.SortStatus.ASC;
 import static com.projects.socialmediaapi.user.enums.SortStatus.DESC;
@@ -60,7 +62,10 @@ public class FeedService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private PageImpl<FeedResponse> getPage(Long page, Long postsPerPage, List<Post> sortListLatestPostSubscriptions, List<FeedResponse> latestPostFeedResponse) {
+    /*Create pagination and extract data for the current page*/
+    private PageImpl<FeedResponse> getPage(Long page, Long postsPerPage,
+                                           List<Post> sortListLatestPostSubscriptions,
+                                           List<FeedResponse> latestPostFeedResponse) {
         PageRequest pageable = PageRequest.of(page.intValue(), postsPerPage.intValue());
 
         int totalPages = getTotalPages(postsPerPage, sortListLatestPostSubscriptions.size());
@@ -80,12 +85,17 @@ public class FeedService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Calculate the total number of pages*/
     private int getTotalPages(Long postsPerPage, int totalPosts) {
+        if (postsPerPage <= 0) {
+            throw new IllegalArgumentException(POST_PER_PAGE_IS_NOT_POSITIVE);
+        }
         return (int) Math.ceil((double) totalPosts / postsPerPage);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Sort the list of latest posts*/
     private List<Post> sortListLatestPostSubscriptions(List<Post> listLatestPostSubscriptions,
                                                        String sortByTimestamp) {
         if (sortByTimestamp.equals(ASC.name())) {
@@ -99,6 +109,7 @@ public class FeedService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Sorting by descending order is used here*/
     private static List<Post> getListDescendingSortedLatestPost(List<Post> listLatestPostSubscriptions) {
         return listLatestPostSubscriptions.stream()
                 .sorted(Comparator.comparing(Post::getTimestamp).reversed())
@@ -107,6 +118,7 @@ public class FeedService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Sorting by ascending order is used here*/
     private static List<Post> getListAscendingSortedLatestPost(List<Post> listLatestPostSubscriptions) {
         return listLatestPostSubscriptions.stream()
                 .sorted(Comparator.comparing(Post::getTimestamp))
@@ -115,6 +127,7 @@ public class FeedService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Convert the list of posts to a list of FeedResponse objects*/
     private static List<FeedResponse> getLatestPostFeedResponse(List<Post> setLatestPostSubscriptions) {
         return setLatestPostSubscriptions
                 .stream()
@@ -134,19 +147,28 @@ public class FeedService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Get the latest posts from subscriptions*/
     private static List<Post> getLatestPostSubscriptions(List<Person> listSubscriptions) {
         return listSubscriptions
                 .stream()
                 .map(Person::getPosts)
-                .map(post -> post.stream()
-                        .max(Comparator.comparing(Post::getTimestamp))
-                        .orElse(null))
+                .map(functionPostsToPostCompareByGetTimestamp())
                 .filter(Objects::nonNull)
+
                 .collect(Collectors.toList());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    private static Function<List<Post>, Post> functionPostsToPostCompareByGetTimestamp() {
+        return post -> post.stream()
+                .max(Comparator.comparing(Post::getTimestamp))
+                .orElse(null);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Get the list of user's subscriptions*/
     private List<Person> getSubscriptions(Person person) {
         return personRepository
                 .findBySubscribersContaining(person)

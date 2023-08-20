@@ -30,4 +30,6 @@ public class UserConstants {
     public static final String USER_HAS_NOT_SUBSCRIBERS = "The user has no subscribers";
 
     public static final String USER_HAS_NOT_FRIENDS = "The user has no friends";
+
+    public static final String POST_PER_PAGE_IS_NOT_POSITIVE = "Posts per page should be a positive number.";
 }

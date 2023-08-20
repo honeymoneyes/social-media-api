@@ -1,5 +1,6 @@
 package com.projects.socialmediaapi.user.services;
 
+import com.projects.socialmediaapi.user.enums.RelationshipStatus;
 import com.projects.socialmediaapi.user.exceptions.*;
 import com.projects.socialmediaapi.user.models.Friendship;
 import com.projects.socialmediaapi.user.models.Person;
@@ -15,7 +16,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.projects.socialmediaapi.user.constants.RelationshipActionConstants.*;
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
+import static com.projects.socialmediaapi.user.enums.RelationshipStatus.*;
 import static com.projects.socialmediaapi.user.enums.RequestStatus.*;
 import static java.util.stream.Collectors.toSet;
 
@@ -35,20 +38,16 @@ public class FriendshipService {
     public FriendShipResponse follow(Long receiverId) {
         UserInteractionService.Result result = userInteractionService.getLoggedUserAndOtherUser(receiverId);
 
-        areIdsFromSameUser(result.loggedInPerson(), result.otherPerson());
+        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
 
-        if (!result.otherPerson().getSubscribers().contains(result.loggedInPerson())) {
-            result.otherPerson().getSubscribers().add(result.loggedInPerson());
+        if (!subscribersOfOtherPerson(result).contains(loggedInPerson(result))) {
+            subscribersOfOtherPerson(result).add(loggedInPerson(result));
         } else {
             throw new SubscriberAlreadyExistException(SUBSCRIBER_ALREADY_EXIST);
         }
 
-        if (!result.loggedInPerson().getSubscribers().contains(result.otherPerson())) {
-            Friendship followRequest = Friendship.builder()
-                    .sender(result.loggedInPerson())
-                    .receiver(result.otherPerson())
-                    .requestStatus(PENDING)
-                    .build();
+        if (!subscribersOfLoggedInPerson(result).contains(otherPerson(result))) {
+            Friendship followRequest = createFriendShipWithStatusPending(result);
             friendshipRepository.save(followRequest);
         } else {
             acceptRequest(receiverId);
@@ -56,9 +55,7 @@ public class FriendshipService {
 
         personRepository.save(result.loggedInPerson());
         personRepository.save(result.otherPerson());
-        return FriendShipResponse.builder()
-                .message(String.format("You've signed up for %s", result.otherPerson().getUsername()))
-                .build();
+        return getFriendShipResponse(SIGNED_UP, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -67,19 +64,19 @@ public class FriendshipService {
     public FriendShipResponse unfollow(Long userId) {
         UserInteractionService.Result result = userInteractionService.getLoggedUserAndOtherUser(userId);
 
-        areIdsFromSameUser(result.loggedInPerson(), result.otherPerson());
+        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
 
         Friendship friendship = friendshipRepository
-                .findBySenderAndReceiver(result.loggedInPerson(), result.otherPerson())
+                .findBySenderAndReceiver(loggedInPerson(result), otherPerson(result))
                 .orElseThrow(() -> new FriendshipRequestNotFoundException(FRIENDSHIP_NOT_FOUND));
 
-        boolean areUsersFriends = isAreUsersFriends(result);
+        boolean areUsersFriends = areUsersFriends(result);
 
-        if (result.otherPerson().getSubscribers().contains(result.loggedInPerson())) {
+        if (subscribersOfOtherPerson(result).contains(loggedInPerson(result))) {
             if (areUsersFriends) {
-                result.otherPerson().getFriends().remove(result.loggedInPerson());
-                result.otherPerson().getSubscribers().remove(result.loggedInPerson());
-                result.loggedInPerson().getFriends().remove(result.otherPerson());
+                friendsOfOtherPerson(result).remove(loggedInPerson(result));
+                subscribersOfOtherPerson(result).remove(loggedInPerson(result));
+                friendsOfLoggedInPerson(result).remove(otherPerson(result));
 
                 friendship.setRequestStatus(PENDING);
 
@@ -88,16 +85,14 @@ public class FriendshipService {
                 friendshipRepository.save(friendship);
 
             } else {
-                result.otherPerson().getSubscribers().remove(result.loggedInPerson());
+                subscribersOfOtherPerson(result).remove(loggedInPerson(result));
                 friendshipRepository.delete(friendship);
             }
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
 
-        return FriendShipResponse.builder()
-                .message(String.format("You unsubscribed from %s", result.otherPerson().getUsername()))
-                .build();
+        return getFriendShipResponse(UNSUBSCRIBED, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -107,20 +102,18 @@ public class FriendshipService {
 
         UserInteractionService.Result result = userInteractionService.getLoggedUserAndOtherUser(subscriberId);
 
-        areIdsFromSameUser(result.loggedInPerson(), result.otherPerson());
+        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
 
-        Friendship friendship = friendshipRepository
-                .findBySenderAndReceiver(result.otherPerson(), result.loggedInPerson())
-                .orElseThrow(() -> new FriendshipRequestNotFoundException(FRIENDSHIP_NOT_FOUND));
+        Friendship friendship = getFriendshipBySenderAndReceiver(result);
 
         if (friendship.getRequestStatus().equals(ACCEPTED)) {
             throw new UsersAlreadyFriendsException(USERS_ARE_FRIENDS);
         }
 
-        if (result.loggedInPerson().getSubscribers().contains(result.otherPerson())) {
-            result.loggedInPerson().getFriends().add(result.otherPerson());
-            result.otherPerson().getSubscribers().add(result.loggedInPerson());
-            result.otherPerson().getFriends().add(result.loggedInPerson());
+        if (subscribersOfLoggedInPerson(result).contains(otherPerson(result))) {
+            friendsOfLoggedInPerson(result).add(otherPerson(result));
+            subscribersOfOtherPerson(result).add(loggedInPerson(result));
+            friendsOfOtherPerson(result).add(loggedInPerson(result));
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
@@ -132,9 +125,7 @@ public class FriendshipService {
         personRepository.save(result.otherPerson());
         friendshipRepository.save(friendship);
 
-        return FriendShipResponse.builder()
-                .message(String.format("You and %s are friends now.", result.otherPerson().getUsername()))
-                .build();
+        return getFriendShipResponse(SET_FRIEND, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -143,34 +134,30 @@ public class FriendshipService {
     public FriendShipResponse rejectRequest(Long senderId) {
         UserInteractionService.Result result = userInteractionService.getLoggedUserAndOtherUser(senderId);
 
-        areIdsFromSameUser(result.loggedInPerson(), result.otherPerson());
+        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
 
-        if (result.loggedInPerson().getSubscribers().contains(result.otherPerson())) {
+        if (subscribersOfLoggedInPerson(result).contains(otherPerson(result))) {
             rejectRequest(result);
         } else {
             throw new SubscriberNotFoundException(SUBSCRIBER_NOT_FOUND);
         }
-        return FriendShipResponse.builder()
-                .message(String.format("Friendship request for user %s rejected", result.otherPerson().getUsername()))
-                .build();
+        return getFriendShipResponse(REQUEST_REJECTED, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @Transactional
+
     public FriendShipResponse removeFriend(Long userId) {
         UserInteractionService.Result result = userInteractionService.getLoggedUserAndOtherUser(userId);
 
-        areIdsFromSameUser(result.loggedInPerson(), result.otherPerson());
+        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
 
-        if (result.loggedInPerson().getFriends().contains(result.otherPerson())) {
-            result.loggedInPerson().getFriends().remove(result.otherPerson());
-            result.loggedInPerson().getSubscribers().remove(result.otherPerson());
-            result.otherPerson().getFriends().remove(result.loggedInPerson());
+        if (areUsersFriends(result)) {
+            friendsOfLoggedInPerson(result).remove(otherPerson(result));
+            subscribersOfLoggedInPerson(result).remove(otherPerson(result));
+            friendsOfOtherPerson(result).remove(loggedInPerson(result));
 
-            Friendship friendship = friendshipRepository
-                    .findBySenderAndReceiver(result.otherPerson(), result.loggedInPerson())
-                    .orElseThrow(() -> new FriendshipRequestNotFoundException(FRIENDSHIP_NOT_FOUND));
+            Friendship friendship = getFriendshipBySenderAndReceiver(result);
 
             friendship.setRequestStatus(PENDING);
 
@@ -181,9 +168,7 @@ public class FriendshipService {
             throw new FriendNotFoundException(FRIEND_NOT_FOUND);
         }
 
-        return FriendShipResponse.builder()
-                .message(String.format("You deleted a friend named %s", result.otherPerson().getUsername()))
-                .build();
+        return getFriendShipResponse(DELETED_FRIEND, result);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -191,7 +176,7 @@ public class FriendshipService {
     public Set<PersonResponse> showFriends(Long userId) {
         Set<PersonResponse> emptySet = getEmptySet(USER_HAS_NOT_FRIENDS);
 
-        Set<Person> friends = getSetFriends(userId);
+        Set<Person> friends = getRelationships(userId, FRIENDS);
         Set<PersonResponse> friendsResponses = getResponses(friends);
 
         return !friendsResponses.isEmpty() ? friendsResponses : emptySet;
@@ -202,7 +187,7 @@ public class FriendshipService {
     public Set<PersonResponse> showSubscribers(Long userId) {
         Set<PersonResponse> emptySet = getEmptySet(USER_HAS_NOT_SUBSCRIBERS);
 
-        Set<Person> subscribers = getSetSubscribers(userId);
+        Set<Person> subscribers = getRelationships(userId, SUBSCRIBERS);
         Set<PersonResponse> friendsResponses = getResponses(subscribers);
 
         return !friendsResponses.isEmpty() ? friendsResponses : emptySet;
@@ -210,18 +195,9 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
-        if (Objects.equals(loggedInPerson.getId(), otherPerson.getId())) {
-            throw new SelfActionException(SELF_ACTION);
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
+    /*Reject request of set friends*/
     private void rejectRequest(UserInteractionService.Result result) {
-        Friendship friendship = friendshipRepository
-                .findBySenderAndReceiver(result.otherPerson(), result.loggedInPerson())
-                .orElseThrow(() -> new FriendshipRequestNotFoundException(FRIENDSHIP_NOT_FOUND));
+        Friendship friendship = getFriendshipBySenderAndReceiver(result);
 
         if (friendship.getRequestStatus().equals(PENDING)) {
             friendship.setRequestStatus(REJECTED);
@@ -230,32 +206,28 @@ public class FriendshipService {
             throw new FriendshipRequestNotFoundException(FRIENDSHIP_REQUEST_NOT_FOUND);
         }
     }
-    public static boolean isAreUsersFriends(UserInteractionService.Result result) {
-        return result.loggedInPerson()
-                .getFriends()
-                .stream()
-                .anyMatch(friend -> Objects.equals(friend.getId(), result.otherPerson().getId()));
-    }
+
     // -----------------------------------------------------------------------------------------------------------------
 
-    private Set<Person> getSetFriends(Long userId) {
+    /*Check users are friends*/
+    public static boolean areUsersFriends(UserInteractionService.Result result) {
+        return friendsOfLoggedInPerson(result)
+                .contains(otherPerson(result));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Get relationships using RelationshipStatus*/
+    private Set<Person> getRelationships(Long userId, RelationshipStatus status) {
         return personRepository
                 .findById(userId)
-                .map(Person::getFriends)
+                .map(user -> status == FRIENDS ? user.getFriends() : user.getSubscribers())
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private Set<Person> getSetSubscribers(Long userId) {
-        return personRepository
-                .findById(userId)
-                .map(Person::getSubscribers)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
+    /*Get Set<PersonResponse> from Set<Person>*/
     private static Set<PersonResponse> getResponses(Set<Person> friends) {
         return friends.stream()
                 .map(friend -> PersonResponse.builder()
@@ -267,6 +239,7 @@ public class FriendshipService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /*Get empty list with response*/
     public Set<PersonResponse> getEmptySet(String request) {
         Set<PersonResponse> emptySet = new HashSet<>();
         emptySet.add(PersonResponse.builder()
@@ -275,6 +248,81 @@ public class FriendshipService {
                 .build());
 
         return emptySet;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    /*Get friends of Logged in Person*/
+    private static Set<Person> friendsOfLoggedInPerson(UserInteractionService.Result result) {
+        return loggedInPerson(result).getFriends();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Get friends of Other Person*/
+    private static Set<Person> friendsOfOtherPerson(UserInteractionService.Result result) {
+        return otherPerson(result).getFriends();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Get subscribers of Logged in Person*/
+    private static Set<Person> subscribersOfLoggedInPerson(UserInteractionService.Result result) {
+        return loggedInPerson(result).getSubscribers();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Get subscribers of Other Person*/
+    private static Set<Person> subscribersOfOtherPerson(UserInteractionService.Result result) {
+        return otherPerson(result).getSubscribers();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Create friendship with status PENDING*/
+    private static Friendship createFriendShipWithStatusPending(UserInteractionService.Result result) {
+        return Friendship.builder()
+                .sender(loggedInPerson(result))
+                .receiver(otherPerson(result))
+                .requestStatus(PENDING)
+                .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Check loggedInPerson and other person aren't same user*/
+    public static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
+        if (Objects.equals(loggedInPerson.getId(), otherPerson.getId())) {
+            throw new SelfActionException(SELF_ACTION);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static Person loggedInPerson(UserInteractionService.Result result) {
+        return result.loggedInPerson();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static Person otherPerson(UserInteractionService.Result result) {
+        return result.otherPerson();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Friendship getFriendshipBySenderAndReceiver(UserInteractionService.Result result) {
+        return friendshipRepository
+                .findBySenderAndReceiver(otherPerson(result), loggedInPerson(result))
+                .orElseThrow(() -> new FriendshipRequestNotFoundException(FRIENDSHIP_NOT_FOUND));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public FriendShipResponse getFriendShipResponse(String message, UserInteractionService.Result result) {
+        return FriendShipResponse.builder()
+                .message(String.format(message, otherPerson(result).getUsername()))
+                .build();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
