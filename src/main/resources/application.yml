@@ -20,3 +20,6 @@ jwt:
   issuer: honeymoney
   expirationMs: 1200000
   refreshExpirationMs: 2000000
+logging:
+  level:
+    sql: debug

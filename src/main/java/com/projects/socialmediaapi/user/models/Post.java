@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = "id")
+@EqualsAndHashCode(exclude = {"id", "person", "image"})
 @ToString(exclude = {"person", "image"})
 public class Post {
     @Id
@@ -19,6 +21,7 @@ public class Post {
     private Long id;
     private String title;
     private String body;
+    private LocalDateTime timestamp;
     @ManyToOne
     @JoinColumn(
             name = "post_id",

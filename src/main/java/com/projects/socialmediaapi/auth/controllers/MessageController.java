@@ -1,7 +1,7 @@
 package com.projects.socialmediaapi.auth.controllers;
 
-import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
 import com.projects.socialmediaapi.user.payload.requests.TextMessageRequest;
+import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
 import com.projects.socialmediaapi.user.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

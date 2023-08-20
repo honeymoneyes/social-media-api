@@ -7,8 +7,8 @@ import com.projects.socialmediaapi.user.exceptions.MessageSendingNotAllowedExcep
 import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.models.Message;
 import com.projects.socialmediaapi.user.models.Person;
-import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
 import com.projects.socialmediaapi.user.payload.requests.TextMessageRequest;
+import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
 import com.projects.socialmediaapi.user.repositories.MessageRepository;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import java.util.Objects;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.DATE_TIME_FORMAT;
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 import static com.projects.socialmediaapi.user.services.FriendshipService.areIdsFromSameUser;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
 
 
 @Service
@@ -107,12 +108,6 @@ public class MessageService {
                         .timestamp(getTimestamp(message.getTimestamp()))
                         .build())
                 .toList();
-    }
-
-    private static LocalDateTime getTimestamp(LocalDateTime time) {
-        return LocalDateTime.parse(time
-                        .format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)),
-                DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
     }
 
     private List<Message> getListMessagesOfPeople(Result result) {

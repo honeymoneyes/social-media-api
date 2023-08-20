@@ -17,11 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.projects.socialmediaapi.user.constants.PostConstants.*;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 import static com.projects.socialmediaapi.user.services.ImageService.getFileName;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +77,7 @@ public class PostService {
 
         post.setTitle(request.getTitle());
         post.setBody(request.getBody());
+        post.setTimestamp(getTimestamp(LocalDateTime.now()));
 
         if (imageRequestIsNull(request)) {
             postRepository.save(post);

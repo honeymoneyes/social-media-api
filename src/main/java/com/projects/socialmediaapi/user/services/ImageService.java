@@ -20,10 +20,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.projects.socialmediaapi.user.constants.PostConstants.IMAGE_NOT_FOUND;
 import static com.projects.socialmediaapi.user.constants.PostConstants.INVALID_FILE_PATH;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +85,7 @@ public class ImageService {
         return Post.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
+                .timestamp(getTimestamp(LocalDateTime.now()))
                 .person(person)
                 .build();
     }
