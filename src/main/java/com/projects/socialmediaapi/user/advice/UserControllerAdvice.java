@@ -150,5 +150,20 @@ public class UserControllerAdvice {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorDetails handleIllegalArgumentException(IllegalArgumentException exception) {
+        return ErrorDetails.builder()
+                .status(BAD_REQUEST.value())
+                .error("ILLEGAL_ARGUMENT")
+                .timestamp(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH)
+                        .format(LocalDateTime.now()))
+                .message(exception.getMessage())
+                .build();
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }
 

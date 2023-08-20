@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FeedResponse {
-    private String username;
-    private PostInfo lastPost;
+public class ImageInfo {
+    private String filename;
 }

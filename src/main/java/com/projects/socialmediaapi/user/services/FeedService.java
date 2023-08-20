@@ -1,11 +1,16 @@
 package com.projects.socialmediaapi.user.services;
 
 import com.projects.socialmediaapi.user.exceptions.SubscriberNotFoundException;
+import com.projects.socialmediaapi.user.models.PageImpl;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.models.Post;
 import com.projects.socialmediaapi.user.payload.responses.FeedResponse;
+import com.projects.socialmediaapi.user.payload.responses.ImageInfo;
+import com.projects.socialmediaapi.user.payload.responses.PageableResponse;
+import com.projects.socialmediaapi.user.payload.responses.PostInfo;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -14,7 +19,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.projects.socialmediaapi.user.constants.UserConstants.SUBSCRIPTIONS_NOT_FOUND;
-import static com.projects.socialmediaapi.user.enums.SortStatus.*;
+import static com.projects.socialmediaapi.user.enums.SortStatus.ASC;
+import static com.projects.socialmediaapi.user.enums.SortStatus.DESC;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
 
 @Service
 @RequiredArgsConstructor
@@ -22,23 +29,55 @@ public class FeedService {
     private final UserInteractionService userInteractionService;
     private final PersonRepository personRepository;
 
-    public List<FeedResponse> getSubscribersFeed(Long page, Long postsPerPage, String sortByTimestamp) {
+    public PageableResponse getSubscribersFeed(Long page, Long postsPerPage, String sortByTimestamp) {
+
         Person person = userInteractionService.getLoggedUser();
 
         List<Person> listSubscriptions = getSubscriptions(person);
 
         List<Post> listLatestPostSubscriptions = getLatestPostSubscriptions(listSubscriptions);
 
-        if (sortByTimestamp.equals(NOT.name())) {
-            return getLatestPostFeedResponse(listLatestPostSubscriptions);
-        } else if(sortByTimestamp.equals(ASC.name())) {
-            return getLatestPostFeedResponse(
-                    getListAscendingSortedLatestPost(listLatestPostSubscriptions));
-        } else if(sortByTimestamp.equals(DESC.name())) {
-            return getLatestPostFeedResponse(
-                    getListDescendingSortedLatestPost(listLatestPostSubscriptions));
+        List<Post> sortListLatestPostSubscriptions =
+                sortListLatestPostSubscriptions(listLatestPostSubscriptions, sortByTimestamp);
+
+        List<FeedResponse> latestPostFeedResponse =
+                getLatestPostFeedResponse(sortListLatestPostSubscriptions);
+
+        PageRequest pageable = PageRequest.of(page.intValue(), postsPerPage.intValue());
+
+        int totalPages = getTotalPages(postsPerPage, sortListLatestPostSubscriptions.size());
+
+        if (page > totalPages) {
+            throw new IllegalArgumentException("Requested page number is out of range.");
         }
 
+        int fromIndex = (int) pageable.getOffset();
+        int toIndex = Math.min(fromIndex + pageable.getPageSize(), latestPostFeedResponse.size());
+
+        List<FeedResponse> feedResponses = latestPostFeedResponse.subList(fromIndex, toIndex);
+
+        PageImpl<FeedResponse> content = new PageImpl<>(feedResponses, pageable, latestPostFeedResponse.size());
+
+        return PageableResponse.builder()
+                .totalPages(content.getTotalPages())
+                .feed(content.getContent())
+                .totalItems(content.getTotalElements())
+                .currentPage(content.getNumber())
+                .build();
+    }
+
+    private int getTotalPages(Long postsPerPage, int totalPosts) {
+        return (int) Math.ceil((double) totalPosts / postsPerPage);
+    }
+
+    private List<Post> sortListLatestPostSubscriptions(List<Post> listLatestPostSubscriptions, String sortByTimestamp) {
+        if (sortByTimestamp.equals(ASC.name())) {
+            return getListAscendingSortedLatestPost(listLatestPostSubscriptions);
+        } else if (sortByTimestamp.equals(DESC.name())) {
+            return getListDescendingSortedLatestPost(listLatestPostSubscriptions);
+        } else {
+            return listLatestPostSubscriptions;
+        }
     }
 
     private static List<Post> getListDescendingSortedLatestPost(List<Post> listLatestPostSubscriptions) {
@@ -58,7 +97,14 @@ public class FeedService {
                 .stream()
                 .map(post -> FeedResponse.builder()
                         .username(post.getPerson().getUsername())
-                        .lastPost(post)
+                        .lastPost(PostInfo.builder()
+                                .title(post.getTitle())
+                                .body(post.getBody())
+                                .timestamp(getTimestamp(post.getTimestamp()))
+                                .imageInfo(ImageInfo.builder()
+                                        .filename(post.getImage().getFileName())
+                                        .build())
+                                .build())
                         .build())
                 .collect(Collectors.toList());
     }
