@@ -16,11 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-import static com.projects.socialmediaapi.security.constants.TokenConstants.DATE_TIME_FORMAT;
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 import static com.projects.socialmediaapi.user.services.FriendshipService.areIdsFromSameUser;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;

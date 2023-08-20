@@ -1,7 +1,9 @@
 package com.projects.socialmediaapi.security.jwt;
 
 import com.projects.socialmediaapi.security.jwt.utils.JwtUtils;
+import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -55,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             } catch (ExpiredJwtException e) {
                 request.setAttribute("expired", e.getMessage());
-            } catch (SignatureException e) {
+            } catch (SignatureException | MalformedJwtException | UserNotFoundException e) {
                 request.setAttribute("incorrect", e.getMessage());
             }
         });
