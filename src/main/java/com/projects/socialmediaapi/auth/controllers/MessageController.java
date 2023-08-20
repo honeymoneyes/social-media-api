@@ -14,7 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageController {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final MessageService messageService;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @PostMapping("/message/{userId}")
     public ResponseEntity<TextMessageResponse> performSendMessage(@PathVariable("userId") Long id,
@@ -22,8 +26,12 @@ public class MessageController {
         return ResponseEntity.ok(messageService.sendMessage(id, request));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @GetMapping("/chat/{userId}")
     public ResponseEntity<List<TextMessageResponse>> performGetChat(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(messageService.getChat(userId));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

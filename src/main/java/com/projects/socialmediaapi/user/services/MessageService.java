@@ -28,8 +28,12 @@ import static com.projects.socialmediaapi.user.services.UserInteractionService.g
 @RequiredArgsConstructor
 public class MessageService {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final PersonRepository personRepository;
     private final MessageRepository messageRepository;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public TextMessageResponse sendMessage(Long id, TextMessageRequest request) {
         Result result = getLoggedInPersonAndOtherPerson(id);
@@ -56,6 +60,8 @@ public class MessageService {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private Result getLoggedInPersonAndOtherPerson(Long id) {
         PersonDetails personDetails = (PersonDetails) SecurityContextHolder
                 .getContext()
@@ -72,8 +78,7 @@ public class MessageService {
         return new Result(loggedInPerson, otherPerson);
     }
 
-    private record Result(Person loggedInPerson, Person otherPerson) {
-    }
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean isAreUsersFriends(Person loggedInPerson, Person otherPerson) {
         return loggedInPerson
@@ -81,6 +86,8 @@ public class MessageService {
                 .stream()
                 .anyMatch(friend -> Objects.equals(friend.getId(), otherPerson.getId()));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public List<TextMessageResponse> getChat(Long userId) {
         Result result = getLoggedInPersonAndOtherPerson(userId);
@@ -96,6 +103,8 @@ public class MessageService {
         return getTextMessageResponses(messages);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static List<TextMessageResponse> getTextMessageResponses(List<Message> messages) {
         return messages.
                 stream()
@@ -108,10 +117,19 @@ public class MessageService {
                 .toList();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private List<Message> getListMessagesOfPeople(Result result) {
         return messageRepository.findChat(
                 result.loggedInPerson,
                 result.otherPerson)
                 .orElseThrow(() -> new ChatNotFoundException(CHAT_NOT_FOUND));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private record Result(Person loggedInPerson, Person otherPerson) {
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

@@ -13,15 +13,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class FeedController {
+    // -----------------------------------------------------------------------------------------------------------------
 
     private final FeedService feedService;
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @GetMapping("/feed")
-    public ResponseEntity<PageableResponse> performSubscribersFeed(@RequestParam(value = "page", required = false) Long page,
+    public ResponseEntity<PageableResponse> performSubscribersFeed(@RequestParam(value = "page", required = false)
+                                                                       Long page,
                                                                    @RequestParam(value = "posts_per_page", required =
                                                                             false) Long postsPerPage,
                                                                    @RequestParam(value = "sort_by_timestamp",
-                                                                            defaultValue = "NOT") String sortByTimestamp) {
+                                                                            defaultValue = "NOT")
+                                                                       String sortByTimestamp) {
         return ResponseEntity.ok(feedService.getSubscribersFeed(page, postsPerPage, sortByTimestamp));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

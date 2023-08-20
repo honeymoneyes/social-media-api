@@ -18,7 +18,11 @@ import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_
 @RequiredArgsConstructor
 public class UserInteractionService {
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final PersonRepository personRepository;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public Result getLoggedUserAndOtherUser(Long userId) {
         PersonDetails personDetails = getPersonDetails();
@@ -33,6 +37,8 @@ public class UserInteractionService {
         return new Result(loggedInPerson, otherPerson);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     public Person getLoggedUser() {
         PersonDetails personDetails = getPersonDetails();
 
@@ -41,6 +47,8 @@ public class UserInteractionService {
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static PersonDetails getPersonDetails() {
         return (PersonDetails) SecurityContextHolder
                 .getContext()
@@ -48,12 +56,18 @@ public class UserInteractionService {
                 .getPrincipal();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     public record Result(Person loggedInPerson, Person otherPerson) {
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static LocalDateTime getTimestamp(LocalDateTime time) {
         return LocalDateTime.parse(time
                         .format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)),
                 DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

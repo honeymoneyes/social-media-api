@@ -26,8 +26,13 @@ import static com.projects.socialmediaapi.user.services.UserInteractionService.g
 @Service
 @RequiredArgsConstructor
 public class FeedService {
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     private final UserInteractionService userInteractionService;
     private final PersonRepository personRepository;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public PageableResponse getSubscribersFeed(Long page, Long postsPerPage, String sortByTimestamp) {
 
@@ -56,7 +61,8 @@ public class FeedService {
 
         List<FeedResponse> feedResponses = latestPostFeedResponse.subList(fromIndex, toIndex);
 
-        PageImpl<FeedResponse> content = new PageImpl<>(feedResponses, pageable, latestPostFeedResponse.size());
+        PageImpl<FeedResponse> content = new PageImpl<>(feedResponses, pageable,
+                latestPostFeedResponse.size());
 
         return PageableResponse.builder()
                 .totalPages(content.getTotalPages())
@@ -66,11 +72,16 @@ public class FeedService {
                 .build();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private int getTotalPages(Long postsPerPage, int totalPosts) {
         return (int) Math.ceil((double) totalPosts / postsPerPage);
     }
 
-    private List<Post> sortListLatestPostSubscriptions(List<Post> listLatestPostSubscriptions, String sortByTimestamp) {
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private List<Post> sortListLatestPostSubscriptions(List<Post> listLatestPostSubscriptions,
+                                                       String sortByTimestamp) {
         if (sortByTimestamp.equals(ASC.name())) {
             return getListAscendingSortedLatestPost(listLatestPostSubscriptions);
         } else if (sortByTimestamp.equals(DESC.name())) {
@@ -80,17 +91,23 @@ public class FeedService {
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static List<Post> getListDescendingSortedLatestPost(List<Post> listLatestPostSubscriptions) {
         return listLatestPostSubscriptions.stream()
                 .sorted(Comparator.comparing(Post::getTimestamp).reversed())
                 .toList();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static List<Post> getListAscendingSortedLatestPost(List<Post> listLatestPostSubscriptions) {
         return listLatestPostSubscriptions.stream()
                 .sorted(Comparator.comparing(Post::getTimestamp))
                 .toList();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static List<FeedResponse> getLatestPostFeedResponse(List<Post> setLatestPostSubscriptions) {
         return setLatestPostSubscriptions
@@ -109,6 +126,8 @@ public class FeedService {
                 .collect(Collectors.toList());
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static List<Post> getLatestPostSubscriptions(List<Person> listSubscriptions) {
         return listSubscriptions
                 .stream()
@@ -120,10 +139,15 @@ public class FeedService {
                 .collect(Collectors.toList());
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private List<Person> getSubscriptions(Person person) {
         return personRepository
                 .findBySubscribersContaining(person)
                 .orElseThrow(() ->
                         new SubscriberNotFoundException(SUBSCRIPTIONS_NOT_FOUND));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
 }

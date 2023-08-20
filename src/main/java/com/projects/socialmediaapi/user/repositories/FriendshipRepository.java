@@ -10,8 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Query(value = "SELECT fr FROM Friendship fr WHERE (fr.sender =?1 AND fr.receiver = " +
                    "?2) OR (fr.sender =?2 AND fr.receiver =?1)")
     Optional<Friendship> findBySenderAndReceiver(Person sender, Person receiver);
 
+    // -----------------------------------------------------------------------------------------------------------------
 }
