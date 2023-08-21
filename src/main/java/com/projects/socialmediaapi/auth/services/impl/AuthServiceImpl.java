@@ -16,6 +16,7 @@ import com.projects.socialmediaapi.user.exceptions.UserAlreadyExistException;
 import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
+import com.projects.socialmediaapi.user.services.UserInteractionService;
 import com.projects.socialmediaapi.utils.mappers.PersonMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,7 @@ import static com.projects.socialmediaapi.security.constants.AuthConstants.REGIS
 import static com.projects.socialmediaapi.security.constants.TokenConstants.REFRESH_TOKEN_NOT_FOUND;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_ALREADY_EXIST;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -110,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
     private Person findPersonByEmail(LoginRequest request) {
         return personRepository
                 .findByEmail(request.email())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
     }
 
     // -----------------------------------------------------------------------------------------------------------------

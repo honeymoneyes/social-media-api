@@ -19,10 +19,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static com.projects.socialmediaapi.user.constants.PostConstants.*;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 import static com.projects.socialmediaapi.user.services.ImageService.getFileName;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
 
 @Service
@@ -43,22 +45,23 @@ public class PostService {
 
         Person person = getAuthenticatePerson();
 
-        Image image;
         if (imageRequestIsNull(request)) {
-            return getUploadPostResponse(
-                    request.getTitle(),
-                    request.getBody());
+            return getUploadPostResponse(request);
         }
 
-        image = imageService.createPostWithImageAndReturnImage(
-                request,
-                person);
-
-        String fileDownloadUri = getFileDownloadUri(image);
+        Image image = getImage(request, person);
 
         return getUploadPostResponse(request,
                 image,
-                fileDownloadUri);
+                getFileDownloadUri(image));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Image getImage(PostRequest request, Person person) throws IOException {
+        return imageService.createPostWithImageAndReturnImage(
+                request,
+                person);
     }
 
     // UPDATE ----------------------------------------------------------------------------------------------------------
@@ -66,26 +69,32 @@ public class PostService {
     @Transactional
     public UpdatePostResponse updatePost(PostRequest request, Long id) throws IOException {
         Person person = getAuthenticatePerson();
+        Post post = getPostById(id);
 
-        Post post = postRepository
-                .findById(id)
-                .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));
-
-        if (!Objects.equals(person.getId(), post.getPerson().getId())) {
-            throw new UnauthorizedPostUpdatedException(UNAUTHORIZED_POST_UPDATE);
-        }
-
-        post.setTitle(request.getTitle());
-        post.setBody(request.getBody());
-        post.setTimestamp(getTimestamp(LocalDateTime.now()));
+        checkIfPersonNotAuthor(person, post);
+        setTitleBodyTimestamp(request, post);
 
         if (imageRequestIsNull(request)) {
-            postRepository.save(post);
-            return getUpdatePostResponse(id, post);
+            return saveWithoutImage(id, post);
         }
 
         imageUpdate(request, post);
         return getUpdatePostResponse(id, post);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private UpdatePostResponse saveWithoutImage(Long id, Post post) {
+        postRepository.save(post);
+        return getUpdatePostResponse(id, post);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void setTitleBodyTimestamp(PostRequest request, Post post) {
+        post.setTitle(request.getTitle());
+        post.setBody(request.getBody());
+        post.setTimestamp(getTimestamp(LocalDateTime.now()));
     }
 
     // DELETE ----------------------------------------------------------------------------------------------------------
@@ -94,14 +103,39 @@ public class PostService {
     public DeletePostResponse deletePost(Long id) {
         Person person = getAuthenticatePerson();
 
-        Post post = postRepository
-                .findById(id)
-                .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));
+        Post post = getPostById(id);
 
-        if (!Objects.equals(person.getId(), post.getPerson().getId())) {
+        checkIfPersonNotAuthor(person, post);
+
+        postRepository.delete(post);
+        return getDeletePostResponse(id);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void checkIfPersonNotAuthor(Person person, Post post) {
+        if (isPersonNotAuthor(person, post)) {
             throw new UnauthorizedPostDeletedException(UNAUTHORIZED_POST_DELETE);
         }
-        postRepository.delete(post);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static boolean isPersonNotAuthor(Person person, Post post) {
+        return !Objects.equals(person.getId(), post.getPerson().getId());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    
+    private Post getPostById(Long id) {
+        return postRepository
+                .findById(id)
+                .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    
+    private static DeletePostResponse getDeletePostResponse(Long id) {
         return DeletePostResponse.builder()
                 .id(id)
                 .message(String.format(POST_DELETED, id))
@@ -112,12 +146,23 @@ public class PostService {
 
     @Transactional
     public PostResponse showAllPostsByUserId(Long postId) {
-        Person person = personRepository.findById(postId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
+        Person person = getPersonById(postId);
+        return getPostResponse(person);
+    }
+    
+    // -----------------------------------------------------------------------------------------------------------------
+    
+    private static PostResponse getPostResponse(Person person) {
         return PostResponse.builder()
                 .posts(person.getPosts())
                 .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Person getPersonById(Long postId) {
+        return personRepository.findById(postId)
+                .orElseThrow(UserNotFoundException());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -128,10 +173,10 @@ public class PostService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private UploadPostResponse getUploadPostResponse(String title, String body) {
+    private UploadPostResponse getUploadPostResponse(PostRequest request) {
         return UploadPostResponse.builder()
-                .title(title)
-                .body(body)
+                .title(request.getTitle())
+                .body(request.getBody())
                 .message(CREATE_SUCCESS)
                 .build();
     }
@@ -143,8 +188,7 @@ public class PostService {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
-        return personRepository.findByEmail(personDetails.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        return getPersonByEmail(personDetails);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -164,13 +208,7 @@ public class PostService {
         return UploadPostResponse.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
-                .imageResponse(
-                        ImageResponse.builder()
-                                .fileName(image.getFileName())
-                                .contentType(image.getFileType())
-                                .downloadUri(fileDownloadUri)
-                                .size(request.getImage().getSize())
-                                .build())
+                .imageResponse(getImageResponse(request, image, fileDownloadUri))
                 .message(CREATE_SUCCESS)
                 .build();
     }
@@ -188,13 +226,16 @@ public class PostService {
 
     private void imageUpdate(PostRequest request, Post post) throws IOException {
         Image image = getImageByPostId(post);
+        setAllPropertiesImage(request, image);
+        savePostAndImage(post, image);
+    }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void setAllPropertiesImage(PostRequest request, Image image) throws IOException {
         image.setData(request.getImage().getBytes());
         image.setFileName(getFileName(request.getImage()));
         image.setFileType(request.getImage().getContentType());
-
-        postRepository.save(post);
-        imageRepository.save(image);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -205,6 +246,33 @@ public class PostService {
                         .getImage()
                         .getId())
                 .orElseThrow(() -> new ImageNotFoundException(IMAGE_NOT_FOUND));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private void savePostAndImage(Post post, Image image) {
+        postRepository.save(post);
+        imageRepository.save(image);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Person getPersonByEmail(PersonDetails personDetails) {
+        return personRepository.findByEmail(personDetails.getUsername())
+                .orElseThrow(UserNotFoundException());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static ImageResponse getImageResponse(PostRequest request,
+                                                  Image image,
+                                                  String fileDownloadUri) {
+        return ImageResponse.builder()
+                .fileName(image.getFileName())
+                .contentType(image.getFileType())
+                .downloadUri(fileDownloadUri)
+                .size(request.getImage().getSize())
+                .build();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

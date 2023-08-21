@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 import static com.projects.socialmediaapi.user.services.FriendshipService.areIdsFromSameUser;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
 
 
@@ -70,11 +71,11 @@ public class MessageService {
 
         Person loggedInPerson = personRepository
                 .findById(personDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
 
         Person otherPerson = personRepository
                 .findById(id)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
         return new Result(loggedInPerson, otherPerson);
     }
 

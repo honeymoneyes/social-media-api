@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import static com.projects.socialmediaapi.security.constants.TokenConstants.DATE_TIME_FORMAT;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
@@ -32,11 +33,11 @@ public class UserInteractionService {
 
         Person loggedInPerson = personRepository
                 .findById(personDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
 
         Person otherPerson = personRepository
                 .findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
         return new Result(loggedInPerson, otherPerson);
     }
 
@@ -47,7 +48,7 @@ public class UserInteractionService {
 
         return personRepository
                 .findById(personDetails.getId())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -90,6 +91,12 @@ public class UserInteractionService {
                 .timestamp(getDateTimeFormatter())
                 .message(exception.getMessage())
                 .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static Supplier<UserNotFoundException> UserNotFoundException() {
+        return () -> new UserNotFoundException(USER_NOT_FOUND);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

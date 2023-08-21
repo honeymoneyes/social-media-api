@@ -23,6 +23,7 @@ import static com.projects.socialmediaapi.user.constants.RelationshipActionConst
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
 import static com.projects.socialmediaapi.user.enums.RelationshipStatus.*;
 import static com.projects.socialmediaapi.user.enums.RequestStatus.*;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -192,7 +193,7 @@ public class FriendshipService {
         return personRepository
                 .findById(userId)
                 .map(getFriendsOrSubscribers(status))
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(UserNotFoundException());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
