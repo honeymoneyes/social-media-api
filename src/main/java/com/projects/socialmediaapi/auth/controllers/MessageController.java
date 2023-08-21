@@ -3,6 +3,7 @@ package com.projects.socialmediaapi.auth.controllers;
 import com.projects.socialmediaapi.user.payload.requests.TextMessageRequest;
 import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
 import com.projects.socialmediaapi.user.services.MessageService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import static com.projects.socialmediaapi.user.constants.MessageEndpointConstant
 @RestController
 @RequestMapping(MAIN_MESSAGE)
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class MessageController {
 
     // -----------------------------------------------------------------------------------------------------------------

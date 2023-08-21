@@ -28,3 +28,4 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+  override-with-generic-response: false

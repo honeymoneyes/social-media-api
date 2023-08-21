@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getDateTimeFormatter;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.getErrorDetails;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
@@ -45,7 +47,17 @@ public class SecurityControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorDetails handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        return getErrorDetails(BAD_REQUEST, "NOT_VALID", exception);
+        return ErrorDetails.builder()
+                .status(BAD_REQUEST.value())
+                .error("NOT_VALID")
+                .timestamp(getDateTimeFormatter())
+                .message(exception
+                        .getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .map(error-> error.getField() + ": " + error.getDefaultMessage())
+                        .collect(toList()))
+                .build();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -68,7 +80,7 @@ public class SecurityControllerAdvice {
 
     @ExceptionHandler(DataAccessResourceFailureException.class)
     @ResponseStatus(INTERNAL_SERVER_ERROR)
-    public ErrorDetails handleBadCredentialsException(DataAccessResourceFailureException  exception) {
+    public ErrorDetails handleBadCredentialsException(DataAccessResourceFailureException exception) {
         return getErrorDetails(INTERNAL_SERVER_ERROR, "DATABASE_ERROR", exception);
     }
 

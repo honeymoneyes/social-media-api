@@ -10,12 +10,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 import static com.projects.socialmediaapi.security.constants.AuthConstants.ACCESS_DENIED;
-import static com.projects.socialmediaapi.security.constants.TokenConstants.*;
+import static com.projects.socialmediaapi.security.constants.TokenConstants.JWT_TOKEN_EXPIRED;
+import static com.projects.socialmediaapi.security.constants.TokenConstants.JWT_TOKEN_NOT_FOUND;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.getErrorDetails;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static java.util.Collections.singletonList;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
@@ -27,25 +29,39 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException)
             throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .status(HttpServletResponse.SC_UNAUTHORIZED)
-                .error("Unauthorized")
-                .message(ACCESS_DENIED)
-                .timestamp(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT, Locale.ENGLISH)
-                        .format(LocalDateTime.now()))
-                .build();
-        if (request.getAttribute("incorrect") != null) {
-            errorDetails.setMessage(JWT_TOKEN_NOT_FOUND);
-        }
-        if (request.getAttribute("expired") != null) {
-            errorDetails.setMessage(JWT_TOKEN_EXPIRED);
-        }
+        responseSetDetails(response);
+        ErrorDetails errorDetails = getErrorDetails(
+                UNAUTHORIZED,
+                "UNAUTHORIZED",
+                new Exception(ACCESS_DENIED));
+        messageDetails(request, errorDetails);
+        sendResponse(response, errorDetails);
+    }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void sendResponse(HttpServletResponse response, ErrorDetails errorDetails) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         response.getWriter().write(objectMapper.writeValueAsString(errorDetails));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void responseSetDetails(HttpServletResponse response) {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(SC_UNAUTHORIZED);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void messageDetails(HttpServletRequest request, ErrorDetails errorDetails) {
+        if (request.getAttribute("incorrect") != null) {
+            errorDetails.setMessage(singletonList(JWT_TOKEN_NOT_FOUND));
+        }
+        if (request.getAttribute("expired") != null) {
+            errorDetails.setMessage(singletonList(JWT_TOKEN_EXPIRED));
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------

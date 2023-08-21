@@ -3,6 +3,7 @@ package com.projects.socialmediaapi.auth.controllers;
 import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
 import com.projects.socialmediaapi.user.payload.responses.PersonResponse;
 import com.projects.socialmediaapi.user.services.FriendshipService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,15 @@ import static com.projects.socialmediaapi.user.constants.FriendEndpointConstants
 @RestController
 @RequestMapping(MAIN_FRIENDS)
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
 
     private final FriendshipService friendShipService;
 
     // -----------------------------------------------------------------------------------------------------------------
-
     @GetMapping(SHOW_FRIENDS)
+
     public ResponseEntity<Set<PersonResponse>> performShowFriends(@PathVariable("userId") Long id) {
         return ResponseEntity.ok().body(friendShipService.showFriends(id));
     }

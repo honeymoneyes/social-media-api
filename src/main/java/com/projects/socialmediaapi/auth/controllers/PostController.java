@@ -7,6 +7,7 @@ import com.projects.socialmediaapi.user.payload.responses.UpdatePostResponse;
 import com.projects.socialmediaapi.user.payload.responses.UploadPostResponse;
 import com.projects.socialmediaapi.user.services.ImageService;
 import com.projects.socialmediaapi.user.services.PostService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -20,6 +21,7 @@ import static com.projects.socialmediaapi.user.constants.PostEndpointConstants.*
 @RestController
 @RequestMapping(MAIN_POSTS)
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class PostController {
 
     // -----------------------------------------------------------------------------------------------------------------

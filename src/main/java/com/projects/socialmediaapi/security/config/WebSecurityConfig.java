@@ -34,6 +34,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(configurer ->
+                        configurer.authenticationEntryPoint(authEntryPointJwt))
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(AUTH_WHITELIST).permitAll())
                 .authorizeHttpRequests(request ->
@@ -41,9 +43,7 @@ public class WebSecurityConfig {
                 .authenticationProvider(daoAuthenticationProvider())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(configurer ->
-                        configurer.authenticationEntryPoint(authEntryPointJwt));
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

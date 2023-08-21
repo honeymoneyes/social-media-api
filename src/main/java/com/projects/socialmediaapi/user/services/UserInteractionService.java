@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -92,7 +93,7 @@ public class UserInteractionService {
                 .status(httpStatus.value())
                 .error(errorStatus)
                 .timestamp(getDateTimeFormatter())
-                .message(exception.getMessage())
+                .message(Collections.singletonList(exception.getMessage()))
                 .build();
     }
 

@@ -7,7 +7,6 @@ import com.projects.socialmediaapi.user.models.Message;
 import com.projects.socialmediaapi.user.payload.requests.TextMessageRequest;
 import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
 import com.projects.socialmediaapi.user.repositories.MessageRepository;
-import com.projects.socialmediaapi.user.services.UserInteractionService.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

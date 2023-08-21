@@ -9,7 +9,6 @@ import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
 import com.projects.socialmediaapi.user.payload.responses.PersonResponse;
 import com.projects.socialmediaapi.user.repositories.FriendshipRepository;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
-import com.projects.socialmediaapi.user.services.UserInteractionService.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

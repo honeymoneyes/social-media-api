@@ -2,6 +2,7 @@ package com.projects.socialmediaapi.auth.controllers;
 
 import com.projects.socialmediaapi.user.payload.responses.PageableResponse;
 import com.projects.socialmediaapi.user.services.FeedService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import static com.projects.socialmediaapi.user.constants.FeedEndpointConstants.S
 @RestController
 @RequestMapping(MAIN_FEED)
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class FeedController {
     // -----------------------------------------------------------------------------------------------------------------
 
