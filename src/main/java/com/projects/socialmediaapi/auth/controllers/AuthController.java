@@ -58,9 +58,16 @@ public class AuthController {
                     schema = @Schema(implementation = MessageResponse.class),
                     examples = @ExampleObject(value = REGISTER_NOT_VALID)
             ))
-
+    @ApiResponse(
+            responseCode = "409",
+            description = "Пользователь уже существует",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MessageResponse.class),
+                    examples = @ExampleObject(value = USER_ALREADY_EXIST)
+            ))
     public ResponseEntity<MessageResponse> performRegister(@Valid
                                                            @RequestBody
+                                                           @Parameter(description = "Запрос с данными для регистрации")
                                                            RegisterRequest request) {
         return ResponseEntity.ok(authServiceImpl.register(request));
     }

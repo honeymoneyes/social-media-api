@@ -135,4 +135,64 @@ public class ExampleValues {
                 ],
                 "timestamp": "08-21-2023 08:52:07"
             }""";
+
+    public static final String USER_ALREADY_EXIST = """
+            {
+                "status": 409,
+                "error": "USER_ALREADY_EXIST",
+                "message": [
+                    "User is already exist!"
+                ],
+                "timestamp": "08-21-2023 08:57:12"
+            }""";
+
+    public static final String FOLLOW_SUCCESS = """
+            {
+                "message": "You've signed up for user2"
+            }""";
+
+    public static final String SELF_SUBSCRIPTION_ERROR = """
+            {
+                "status": 409,
+                "error": "SELF_SUBSCRIPTION_ERROR",
+                "message": [
+                    "You can't action to yourself"
+                ],
+                "timestamp": "08-21-2023 09:13:17"
+            }""";
+
+    public static final String UNAUTHORIZED_ACCESS = """
+            {
+                "status": 401,
+                "error": "UNAUTHORIZED",
+                "message": [
+                    "User doesn't have access"
+                ],
+                "timestamp": "08-21-2023 09:14:46"
+            }""";
+
+    public static final String SUBSCRIBER_ALREADY_EXIST = """
+            {
+                "status": 409,
+                "error": "SUBSCRIBER_ALREADY_EXIST",
+                "message": [
+                    "You're already subscribed to this person!"
+                ],
+                "timestamp": "08-21-2023 09:19:25"
+            }""";
+
+    public static final String SUBSCRIBER_NOT_FOUND = """
+            {
+                "status": 404,
+                "error": "SUBSCRIBER_NOT_FOUND",
+                "message": [
+                    "Subscriber is not found!"
+                ],
+                "timestamp": "08-21-2023 09:26:51"
+            }""";
+
+    public static final String UNFOLLOW_SUCCES = """
+            {
+                "message": "You unsubscribed from user2"
+            }""";
 }

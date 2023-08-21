@@ -18,8 +18,8 @@ spring:
 jwt:
   secret: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJUpJv/bbRs54DGi+TaxroOG+0bwp2dxByUR4mWyHUi8jgI1cLnHiyF3/34vjHM+1YmSplHfCJLC/Z9MVh8AZ5sCAwEAAQ==
   issuer: honeymoney
-  expirationMs: 10000
-  refreshExpirationMs: 20000
+  expirationMs: 1000000
+  refreshExpirationMs: 2000000
 
 springdoc:
   api-docs:
