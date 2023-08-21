@@ -3,6 +3,7 @@ package com.projects.socialmediaapi.security.advice;
 import com.projects.socialmediaapi.security.exceptions.DuplicateLoginException;
 import com.projects.socialmediaapi.security.exceptions.RefreshTokenExpirationException;
 import com.projects.socialmediaapi.security.exceptions.RefreshTokenNotFoundException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -61,6 +62,14 @@ public class SecurityControllerAdvice {
     @ResponseStatus(BAD_REQUEST)
     public ErrorDetails handleBadCredentialsException(BadCredentialsException exception) {
         return getErrorDetails(BAD_REQUEST, "BAD_CREDENTIALS", exception);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ErrorDetails handleBadCredentialsException(DataAccessResourceFailureException  exception) {
+        return getErrorDetails(INTERNAL_SERVER_ERROR, "DATABASE_ERROR", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

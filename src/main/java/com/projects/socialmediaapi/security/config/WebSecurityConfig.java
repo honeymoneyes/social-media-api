@@ -34,16 +34,16 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(configurer ->
-                        configurer.authenticationEntryPoint(authEntryPointJwt))
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/auth/**", "/error").permitAll())
+                        request.requestMatchers(AUTH_WHITELIST).permitAll())
                 .authorizeHttpRequests(request ->
                         request.anyRequest().authenticated())
                 .authenticationProvider(daoAuthenticationProvider())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(configurer ->
+                        configurer.authenticationEntryPoint(authEntryPointJwt));
 
         return http.build();
     }
@@ -73,4 +73,13 @@ public class WebSecurityConfig {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    private static final String[] AUTH_WHITELIST = {
+            "/auth/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/error"
+    };
 }
