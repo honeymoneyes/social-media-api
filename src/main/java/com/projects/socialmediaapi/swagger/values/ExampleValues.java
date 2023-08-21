@@ -151,7 +151,7 @@ public class ExampleValues {
                 "message": "You've signed up for user2"
             }""";
 
-    public static final String SELF_SUBSCRIPTION_ERROR = """
+    public static final String SELF_FOLLOW_UNFOLLOW_ERROR = """
             {
                 "status": 409,
                 "error": "SELF_SUBSCRIPTION_ERROR",
@@ -191,8 +191,53 @@ public class ExampleValues {
                 "timestamp": "08-21-2023 09:26:51"
             }""";
 
-    public static final String UNFOLLOW_SUCCES = """
+    public static final String UNFOLLOW_SUCCESS = """
             {
                 "message": "You unsubscribed from user2"
+            }""";
+
+    public static final String REQUEST_FRIEND_SUCCESS = """
+            {
+                "message": "You unsubscribed from user2"
+            }""";
+
+    public static final String JWT_TOKEN_NOT_EXIST = """
+            {
+                "status": 401,
+                "error": "UNAUTHORIZED",
+                "message": [
+                    "JWT token doesn't exist"
+                ],
+                "timestamp": "08-21-2023 09:40:35"
+            }""";
+
+    public static final String FRIENDSHIP_REQUEST_NOT_FOUND = """
+            {
+                "status": 404,
+                "error": "FRIENDSHIP_REQUEST_NOT_FOUND",
+                "message": [
+                    "Friendship is not found"
+                ],
+                "timestamp": "08-21-2023 09:57:51"
+            }""";
+
+    public static final String FRIENDSHIP_REQUEST_REJECTED = """
+            {
+                "message": "Friendship request for user user1 rejected"
+            }""";
+
+    public static final String FRIEND_REMOVE_SUCCESS = """
+            {
+                "message": "You deleted a friend named user1"
+            }""";
+
+    public static final String FRIEND_IS_NOT_FOUND = """
+            {
+                "status": 404,
+                "error": "FRIEND_NOT_FOUND",
+                "message": [
+                    "Friend is not found!"
+                ],
+                "timestamp": "08-21-2023 10:12:53"
             }""";
 }

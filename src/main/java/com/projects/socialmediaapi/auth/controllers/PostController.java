@@ -1,12 +1,13 @@
 package com.projects.socialmediaapi.auth.controllers;
 
 import com.projects.socialmediaapi.user.payload.requests.PostRequest;
-import com.projects.socialmediaapi.user.payload.responses.DeletePostResponse;
-import com.projects.socialmediaapi.user.payload.responses.PostResponse;
-import com.projects.socialmediaapi.user.payload.responses.UpdatePostResponse;
-import com.projects.socialmediaapi.user.payload.responses.UploadPostResponse;
+import com.projects.socialmediaapi.user.payload.responses.*;
 import com.projects.socialmediaapi.user.services.ImageService;
 import com.projects.socialmediaapi.user.services.PostService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+import static com.projects.socialmediaapi.swagger.values.ExampleValues.JWT_TOKEN_EXPIRED;
 import static com.projects.socialmediaapi.user.constants.PostEndpointConstants.*;
 
 @RestController
@@ -48,7 +50,7 @@ public class PostController {
     @PostMapping(CREATE_POST)
     public ResponseEntity<UploadPostResponse> performCreatePost(@Valid
                                                                 @ModelAttribute
-                                                                PostRequest request) throws IOException {
+                                                                PostRequest request)  {
         return ResponseEntity.ok(postService.createPost(request));
     }
 
