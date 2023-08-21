@@ -42,4 +42,5 @@ mvn spring-boot:run
 ```
 
 The application will start running at http://localhost:8080.
+
 The Swagger will start running at http://localhost:8080/swagger-ui/index.html
