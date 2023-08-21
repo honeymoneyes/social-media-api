@@ -98,7 +98,7 @@ public class AuthController {
             ))
 
     @ApiResponse(
-            responseCode = "401",
+            responseCode = "400.1",
             description = "Неверный запрос",
             content = @Content(
                     mediaType = "application/json",

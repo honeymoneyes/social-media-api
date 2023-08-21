@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.user.services;
+package com.projects.socialmediaapi.user.services.impl;
 
 import com.projects.socialmediaapi.security.advice.ErrorDetails;
 import com.projects.socialmediaapi.security.services.impl.PersonDetails;
@@ -24,7 +24,7 @@ import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_
 
 @Service
 @RequiredArgsConstructor
-public class UserInteractionService {
+public class UserInteractionServiceImpl {
 
     // -----------------------------------------------------------------------------------------------------------------
 

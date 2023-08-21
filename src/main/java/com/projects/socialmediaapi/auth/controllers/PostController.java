@@ -1,13 +1,12 @@
 package com.projects.socialmediaapi.auth.controllers;
 
-import com.projects.socialmediaapi.security.payload.responses.JwtResponse;
 import com.projects.socialmediaapi.user.payload.requests.PostRequest;
 import com.projects.socialmediaapi.user.payload.responses.DeletePostResponse;
 import com.projects.socialmediaapi.user.payload.responses.PostResponse;
 import com.projects.socialmediaapi.user.payload.responses.UpdatePostResponse;
 import com.projects.socialmediaapi.user.payload.responses.UploadPostResponse;
-import com.projects.socialmediaapi.user.services.ImageService;
-import com.projects.socialmediaapi.user.services.PostService;
+import com.projects.socialmediaapi.user.services.impl.ImageServiceImpl;
+import com.projects.socialmediaapi.user.services.impl.PostServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,8 +39,8 @@ public class PostController {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private final PostService postService;
-    private final ImageService imageService;
+    private final PostServiceImpl postServiceImpl;
+    private final ImageServiceImpl imageServiceImpl;
 
     // -----------------------------------------------------------------------------------------------------------------
     @ApiResponse(
@@ -56,10 +55,11 @@ public class PostController {
     @Operation(
             summary = "Просмотр всех постов пользователя по его ID",
             description = "Позволяет просматривать все посты пользователя по его ID")
-    public ResponseEntity<PostResponse> performShowAllPosts(@Parameter(description = "ID пользователя")
+    public ResponseEntity<PostResponse> performShowAllPosts(@Parameter(description = "ID пользователя для получения " +
+                                                                                     "всех постов")
                                                             @PathVariable("userId")
                                                             Long postId) {
-        return ResponseEntity.ok(postService.showAllPostsByUserId(postId));
+        return ResponseEntity.ok(postServiceImpl.showAllPostsByUserId(postId));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public class PostController {
     public ResponseEntity<Resource> performShowImage(@Parameter(description = "ID поста")
                                                      @PathVariable("postId")
                                                      Long postId) {
-        return imageService.showImageByPostId(postId);
+        return imageServiceImpl.showImageByPostId(postId);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ public class PostController {
                                                                 @ModelAttribute
                                                                 @Parameter(description = "Данные поста")
                                                                 PostRequest request) {
-        return ResponseEntity.ok(postService.createPost(request));
+        return ResponseEntity.ok(postServiceImpl.createPost(request));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -140,9 +140,9 @@ public class PostController {
     public ResponseEntity<UpdatePostResponse> performUpdatePost(@Valid
                                                                 @Parameter(description = "Данные поста")
                                                                 @ModelAttribute PostRequest request,
-                                                                @Parameter(description = "ID поста")
+                                                                @Parameter(description = "ID обновляемого поста")
                                                                 @PathVariable("postId") Long id) throws IOException {
-        return ResponseEntity.ok(postService.updatePost(request, id));
+        return ResponseEntity.ok(postServiceImpl.updatePost(request, id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -173,9 +173,9 @@ public class PostController {
             ))
     @DeleteMapping(DELETE_POST)
     @Operation(summary = "Удаление поста по ID", description = "Удаление постов по переданному ID")
-    public ResponseEntity<DeletePostResponse> performDeletePost(@Parameter(description = "ID поста")
+    public ResponseEntity<DeletePostResponse> performDeletePost(@Parameter(description = "ID удаляемого поста")
                                                                 @PathVariable("postId") Long id) {
-        return ResponseEntity.ok(postService.deletePost(id));
+        return ResponseEntity.ok(postServiceImpl.deletePost(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

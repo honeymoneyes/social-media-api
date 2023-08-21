@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.UserNotFoundException;
 
 @Service
 @RequiredArgsConstructor

@@ -1,9 +1,8 @@
 package com.projects.socialmediaapi.auth.controllers;
 
-import com.projects.socialmediaapi.security.payload.responses.JwtResponse;
 import com.projects.socialmediaapi.user.payload.requests.TextMessageRequest;
 import com.projects.socialmediaapi.user.payload.responses.TextMessageResponse;
-import com.projects.socialmediaapi.user.services.MessageService;
+import com.projects.socialmediaapi.user.services.impl.MessageServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,7 +47,7 @@ import static com.projects.socialmediaapi.user.constants.MessageEndpointConstant
         ))
 public class MessageController {
 
-    private final MessageService messageService;
+    private final MessageServiceImpl messageServiceImpl;
 
     @PostMapping(SEND_MESSAGE)
     @Operation(summary = "Отправка текстового сообщения",
@@ -72,10 +71,10 @@ public class MessageController {
                     examples = @ExampleObject(value = SEND_MESSAGE_DENIED)
             ))
     public ResponseEntity<TextMessageResponse> performSendMessage(
-            @Parameter(description = "ID пользователя")
+            @Parameter(description = "ID получателя")
             @PathVariable("userId") Long id,
             @RequestBody TextMessageRequest request) {
-        return ResponseEntity.ok(messageService.sendMessage(id, request));
+        return ResponseEntity.ok(messageServiceImpl.sendMessage(id, request));
     }
 
     @GetMapping(GET_CHAT)
@@ -100,8 +99,8 @@ public class MessageController {
                     examples = @ExampleObject(value = SHOW_CHAT_DENIED)
             ))
     public ResponseEntity<List<TextMessageResponse>> performGetChat(
-            @Parameter(description = "ID пользователя")
+            @Parameter(description = "ID получателя с которым есть чат")
             @PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(messageService.getChat(userId));
+        return ResponseEntity.ok(messageServiceImpl.getChat(userId));
     }
 }

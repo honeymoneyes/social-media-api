@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.projects.socialmediaapi.user.services.UserInteractionService.getDateTimeFormatter;
-import static com.projects.socialmediaapi.user.services.UserInteractionService.getErrorDetails;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.getDateTimeFormatter;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.getErrorDetails;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.*;
 

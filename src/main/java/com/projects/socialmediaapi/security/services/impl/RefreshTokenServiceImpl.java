@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static com.projects.socialmediaapi.security.constants.AuthConstants.LOGIN_ALREADY_COMPLETED;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.REFRESH_TOKEN_EXPIRED;
-import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.UserNotFoundException;
 
 @Service
 @RequiredArgsConstructor

@@ -2,8 +2,9 @@ package com.projects.socialmediaapi.auth.controllers;
 
 import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
 import com.projects.socialmediaapi.user.payload.responses.PersonResponse;
-import com.projects.socialmediaapi.user.services.FriendshipService;
+import com.projects.socialmediaapi.user.services.impl.FriendshipServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,15 +64,17 @@ import static com.projects.socialmediaapi.user.constants.FriendEndpointConstants
 public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
 
-    private final FriendshipService friendShipService;
+    private final FriendshipServiceImpl friendShipServiceImpl;
 
     // -----------------------------------------------------------------------------------------------------------------
     @GetMapping(SHOW_FRIENDS)
     @Operation(summary = "Показать друзей",
             description = "Получить список друзей пользователя.")
 
-    public ResponseEntity<Set<PersonResponse>> performShowFriends(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok().body(friendShipService.showFriends(id));
+    public ResponseEntity<Set<PersonResponse>> performShowFriends(@Parameter(description = "Список друзей по ID " +
+                                                                                           "пользователя")
+                                                                  @PathVariable("userId") Long id) {
+        return ResponseEntity.ok().body(friendShipServiceImpl.showFriends(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -79,8 +82,11 @@ public class FriendShipController {
     @GetMapping(SHOW_SUBSCRIBERS)
     @Operation(summary = "Показать подписчиков",
             description = "Получить список подписчиков пользователя.")
-    public ResponseEntity<Set<PersonResponse>> performShowSubscribers(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok().body(friendShipService.showSubscribers(id));
+    public ResponseEntity<Set<PersonResponse>> performShowSubscribers(@Parameter(description = "Список подписчиков по" +
+                                                                                               " ID " +
+                                                                                               "пользователя")
+                                                                      @PathVariable("userId") Long id) {
+        return ResponseEntity.ok().body(friendShipServiceImpl.showSubscribers(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -102,8 +108,10 @@ public class FriendShipController {
                     examples = @ExampleObject(value = SUBSCRIBER_ALREADY_EXIST)
 
             ))
-    public ResponseEntity<FriendShipResponse> performFollow(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.follow(id));
+    public ResponseEntity<FriendShipResponse> performFollow(@Parameter(description = "ID пользователя для " +
+                                                                                     "подписки на него")
+                                                            @PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipServiceImpl.follow(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -125,8 +133,10 @@ public class FriendShipController {
                     examples = @ExampleObject(value = SUBSCRIBER_NOT_FOUND)
 
             ))
-    public ResponseEntity<FriendShipResponse> performUnfollow(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.unfollow(id));
+    public ResponseEntity<FriendShipResponse> performUnfollow(@Parameter(description = "ID пользователя для " +
+                                                                                       "отписки от него")
+                                                              @PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipServiceImpl.unfollow(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -148,8 +158,10 @@ public class FriendShipController {
 
             ))
     @PostMapping(ACCEPT_REQUEST_FRIEND)
-    public ResponseEntity<FriendShipResponse> performAcceptRequest(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.acceptRequest(id));
+    public ResponseEntity<FriendShipResponse> performAcceptRequest(@Parameter(description = "ID пользователя для " +
+                                                                                            "принятия зявки в друзья")
+                                                                   @PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipServiceImpl.acceptRequest(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -171,8 +183,10 @@ public class FriendShipController {
                     examples = @ExampleObject(value = SUBSCRIBER_NOT_FOUND)
 
             ))
-    public ResponseEntity<FriendShipResponse> performRejectRequest(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.rejectRequest(id));
+    public ResponseEntity<FriendShipResponse> performRejectRequest(@Parameter(description = "ID пользователя для " +
+                                                                                            "отклонения зявки в друзья")
+                                                                   @PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipServiceImpl.rejectRequest(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -194,8 +208,10 @@ public class FriendShipController {
                     examples = @ExampleObject(value = FRIEND_IS_NOT_FOUND)
 
             ))
-    public ResponseEntity<FriendShipResponse> performRemoveFriend(@PathVariable("userId") Long id) {
-        return ResponseEntity.ok(friendShipService.removeFriend(id));
+    public ResponseEntity<FriendShipResponse> performRemoveFriend(
+            @Parameter(description = "ID удаляемого пользователя из друзей")
+            @PathVariable("userId") Long id) {
+        return ResponseEntity.ok(friendShipServiceImpl.removeFriend(id));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

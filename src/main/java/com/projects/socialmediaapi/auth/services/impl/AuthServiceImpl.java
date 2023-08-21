@@ -28,7 +28,7 @@ import static com.projects.socialmediaapi.security.constants.AuthConstants.BEARE
 import static com.projects.socialmediaapi.security.constants.AuthConstants.REGISTERED_SUCCESS;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.REFRESH_TOKEN_NOT_FOUND;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_ALREADY_EXIST;
-import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.UserNotFoundException;
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package com.projects.socialmediaapi.user.services;
+package com.projects.socialmediaapi.user.services.impl;
 
 import com.projects.socialmediaapi.user.exceptions.FilePathInvalidException;
 import com.projects.socialmediaapi.user.exceptions.ImageNotFoundException;
@@ -23,13 +23,13 @@ import java.util.Objects;
 
 import static com.projects.socialmediaapi.user.constants.PostConstants.IMAGE_NOT_FOUND;
 import static com.projects.socialmediaapi.user.constants.PostConstants.INVALID_FILE_PATH;
-import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.getTimestamp;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.MediaType.parseMediaType;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService {
+public class ImageServiceImpl {
 
     // -----------------------------------------------------------------------------------------------------------------
 

@@ -1,9 +1,9 @@
 package com.projects.socialmediaapi.auth.controllers;
 
 import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
-import com.projects.socialmediaapi.user.payload.responses.PageableResponse;
-import com.projects.socialmediaapi.user.services.FeedService;
+import com.projects.socialmediaapi.user.services.impl.FeedServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.projects.socialmediaapi.swagger.DescriptionConstants.FEED_TAG_DESCRIPTION;
 import static com.projects.socialmediaapi.swagger.values.ExampleValues.FEED_RECEIVED_SUCCESS;
-import static com.projects.socialmediaapi.swagger.values.ExampleValues.SELF_FOLLOW_UNFOLLOW_ERROR;
 import static com.projects.socialmediaapi.user.constants.FeedEndpointConstants.MAIN_FEED;
 import static com.projects.socialmediaapi.user.constants.FeedEndpointConstants.SHOW_FEED;
 
@@ -34,7 +33,7 @@ import static com.projects.socialmediaapi.user.constants.FeedEndpointConstants.S
 public class FeedController {
     // -----------------------------------------------------------------------------------------------------------------
 
-    private final FeedService feedService;
+    private final FeedServiceImpl feedServiceImpl;
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -47,19 +46,23 @@ public class FeedController {
             ))
     @GetMapping(SHOW_FEED)
     @Operation(summary = "Лента последних постов пользователей, на которых подписан user",
-    description = "Пользователь получает ленту из последних постов пользователей с возможностью" +
-                  "пагинации и двунаправленной сортировки по времени опубликования. Первое значение" +
-                  "отвечает за страницу по счету от 0. Второе значение отвечает за количество постов" +
-                  "на странице. Третье значение отвечает за сортировку. NOT - без изменений," +
-                  "DESC - по убыванию, ASC - по возрастанию. Также можно не указывать значений.")
-    public ResponseEntity<?> performSubscribersFeed(@RequestParam(value = "page", required = false)
-                                                                       Long page,
-                                                                   @RequestParam(value = "posts_per_page", required =
-                                                                            false) Long postsPerPage,
-                                                                   @RequestParam(value = "sort_by_timestamp",
-                                                                            defaultValue = "NOT")
-                                                                       String sortByTimestamp) {
-        return ResponseEntity.ok(feedService.getSubscribersFeed(page, postsPerPage, sortByTimestamp));
+            description = "Пользователь получает ленту из последних постов пользователей с возможностью" +
+                          "пагинации и двунаправленной сортировки по времени опубликования. Первое значение" +
+                          "отвечает за страницу по счету от 0. Второе значение отвечает за количество постов" +
+                          "на странице. Третье значение отвечает за сортировку. NOT - без изменений," +
+                          "DESC - по убыванию, ASC - по возрастанию. Также можно не указывать значений.")
+    public ResponseEntity<?> performSubscribersFeed(
+            @Parameter(description = "Номер страницы")
+            @RequestParam(value = "page", required = false)
+            Long page,
+            @Parameter(description = "Количество постов на странице")
+            @RequestParam(value = "posts_per_page", required =
+                    false) Long postsPerPage,
+            @Parameter(description = "Тип сортировки")
+            @RequestParam(value = "sort_by_timestamp",
+                    defaultValue = "NOT")
+            String sortByTimestamp) {
+        return ResponseEntity.ok(feedServiceImpl.getSubscribersFeed(page, postsPerPage, sortByTimestamp));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

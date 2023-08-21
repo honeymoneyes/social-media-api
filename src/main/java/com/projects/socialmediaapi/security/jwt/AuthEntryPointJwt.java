@@ -14,7 +14,7 @@ import java.io.IOException;
 import static com.projects.socialmediaapi.security.constants.AuthConstants.ACCESS_DENIED;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.JWT_TOKEN_EXPIRED;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.JWT_TOKEN_NOT_FOUND;
-import static com.projects.socialmediaapi.user.services.UserInteractionService.getErrorDetails;
+import static com.projects.socialmediaapi.user.services.impl.UserInteractionServiceImpl.getErrorDetails;
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
