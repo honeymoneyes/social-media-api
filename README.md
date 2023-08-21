@@ -61,5 +61,5 @@ mvn spring-boot:run
 The application will start running at http://localhost:8080.
 
 The Swagger will start running at http://localhost:8080/swagger-ui/index.html
-<img src="https://github.com/honeymoneyes/social-media-api/blob/master/src/main/resources/static/1.jpg"/>
-<img src="https://github.com/honeymoneyes/social-media-api/blob/master/src/main/resources/static/2.jpg"/>
+<img src="https://github.com/honeymoneyes/social-media-api/blob/master/src/main/resources/static/1.jpg" width="500px" height = "750px"/>
+<img src="https://github.com/honeymoneyes/social-media-api/blob/master/src/main/resources/static/2.jpg" width="500px" height = "750px"/>
