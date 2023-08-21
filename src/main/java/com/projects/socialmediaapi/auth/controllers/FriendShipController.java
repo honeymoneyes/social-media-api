@@ -1,8 +1,14 @@
 package com.projects.socialmediaapi.auth.controllers;
 
+import com.projects.socialmediaapi.security.payload.responses.TokenRefreshResponse;
+import com.projects.socialmediaapi.swagger.values.ExampleValues;
 import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
 import com.projects.socialmediaapi.user.payload.responses.PersonResponse;
 import com.projects.socialmediaapi.user.services.FriendshipService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +22,13 @@ import static com.projects.socialmediaapi.user.constants.FriendEndpointConstants
 @RequestMapping(MAIN_FRIENDS)
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
+@ApiResponse(responseCode = "401",
+        description = "Неавторизованный доступ",
+        content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = FriendShipResponse.class),
+                examples = @ExampleObject(value = ExampleValues.JWT_TOKEN_EXPIRED)
+
+        ))
 public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
 

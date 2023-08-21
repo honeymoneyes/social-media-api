@@ -21,7 +21,7 @@ public class SecurityControllerAdvice {
     // -----------------------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(RefreshTokenNotFoundException.class)
-    @ResponseStatus(FORBIDDEN)
+    @ResponseStatus(NOT_FOUND)
     public ErrorDetails handleTokenRefreshException(RefreshTokenNotFoundException exception) {
         return getErrorDetails(NOT_FOUND, "REFRESH_TOKEN_NOT_EXIST", exception);
     }
