@@ -77,7 +77,6 @@ public class FeedServiceImpl implements FeedService {
         int totalPages = getTotalPages(postsPerPage, sortListLatestPostSubscriptions.size());
 
         if (page >= totalPages) {
-            // TODO проверить >=
             throw new IllegalArgumentException(OUT_OF_RANGE);
         }
 
