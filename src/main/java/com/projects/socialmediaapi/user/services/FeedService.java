@@ -11,6 +11,7 @@ import com.projects.socialmediaapi.user.payload.responses.PostInfo;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -47,9 +48,13 @@ public class FeedService {
 
         List<Post> sortListLatestPostSubscriptions =
                 sortListLatestPostSubscriptions(listLatestPostSubscriptions, sortByTimestamp);
-
         List<FeedResponse> latestPostFeedResponse =
                 getLatestPostFeedResponse(sortListLatestPostSubscriptions);
+
+        if (page == null || postsPerPage == null) {
+            return getPageableResponseIfParamsAreNull(latestPostFeedResponse);
+        }
+
 
         PageImpl<FeedResponse> content = getPage(
                 page,
@@ -173,6 +178,17 @@ public class FeedService {
                 .feed(content.getContent())
                 .totalItems(content.getTotalElements())
                 .currentPage(content.getNumber())
+                .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static PageableResponse getPageableResponseIfParamsAreNull(List<FeedResponse> content) {
+        return PageableResponse.builder()
+                .totalPages(0)
+                .feed(content)
+                .totalItems(0L)
+                .currentPage(0)
                 .build();
     }
 

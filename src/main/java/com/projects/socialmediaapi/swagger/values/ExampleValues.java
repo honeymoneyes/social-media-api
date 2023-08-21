@@ -45,17 +45,11 @@ public class ExampleValues {
 
     public static final String REFRESH_TOKEN_UPDATED = """
             {
-                "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IiQyYSQxMC" +
-                               "RhUEtJOExSWVBjZWlQV1VBMGNXRTF1OFV0cmM2MFJyeW9PSDNaSnNBL05EcVhiQ3Z" +
-                               "3ZWlKbSIsImlkIjoxLCJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsInVzZXJuYW1l" +
-                               "IjoidXNlcjEiLCJqdGkiOiI4NDY4MWU2OC04ZjdmLTQ5MzgtOGE0NC1lYWYwNjkzY" +
-                               "jkxYTAiLCJzdWIiOiJ1c2VyMUBnbWFpbC5jb20iLCJpc3MiOiJob25leW1vbmV5Ii" +
-                               "wiaWF0IjoxNjkyNTk4MDQ1LCJleHAiOjE2OTI1OTkyNDV9.turwAboN2lby0EDhFz" +
-                               "lIiCp48shSusRMN9MjpDaJ9Ok",
-                "refreshToken": "d7242539-3b41-4880-bd5e-ce8f478eacc0",
+                "access-token": "eyJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IiQyYSQxMCRGWjJFR0htREHucHFZWDVFSVJHN0p1SFEvMW9jS2xLc1oyMnJhRzB1dkswcENkM2oyZVRsbyIsImlkIjoxLCJlbWFpbCI6InN0cmluZ0BnbWFpbC5jb20iLCJ",
+                               
+                "refresh-token": "d1f71dad-30be-4bb3-b73a-9226a79b7838",
                 "tokenType": "Bearer"
-            }
-            """;
+            }""";
 
     public static final String DUPLICATE_LOGIN = """
             {
@@ -94,17 +88,11 @@ public class ExampleValues {
 
     public static final String LOGIN_OK = """
             {
-                "type": "Bearer ",
-                "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IiQyYSQxMCRTU0x1QlhGRkpna1MwaHdsMTBScHQuWi9qNk" +
-                               "dMSFpHNm5SVzJKekRoTFlldWFKQUp5aHpKcSIsImlkIjoxLCJlbWFpbCI6InVz" +
-                               "ZXIyQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoidXNlcjIiLCJqdGkiOiIzOWE3NT" +
-                               "AyMy1mZDZhLTQ4MWEtODA5OC04MDMxNTkyNWNhNjAiLCJzdWIiOiJ1c2VyMkBn" +
-                               "bWFpbC5jb20iLCJpc3MiOiJob25leW1vbmV5IiwiaWF0IjoxNjkyNTk3Nzg3LCJ" +
-                               "leHAiOjE2OTI1OTg5ODd9.nA0AmMf3bIiQLa1PhrmYbIKmlcnA36HW63B_DjDCt" +
-                               "bQ",
-                "refreshToken": "2b83d6c0-5f4a-4435-88b8-9a0665cf7b5a"
-            }
-            """;
+              "type": "Bearer",
+              "access-token": "eyJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6IiQyYSQxMCRGWjJFR0htREHucHFZWDVFSVJHN0p1SFEvMW9jS2xLc1oyMnJhRzB1dkswcENkM2oyZVRsbyIsImlkIjoxLCJlbWFpbCI6InN0cmluZ0BnbWFpbC5jb20iLCJ",
+                               
+              "refresh-token": "d1f71dad-30be-4bb3-b73a-9226a79b7838"
+            }""";
 
     public static final String REGISTER_NOT_VALID = """
             {
@@ -240,4 +228,178 @@ public class ExampleValues {
                 ],
                 "timestamp": "08-21-2023 10:12:53"
             }""";
+
+    public static final String POST_REQUEST_NOT_VALID = """
+            {
+                "status": 400,
+                "error": "NOT_VALID",
+                "message": [
+                    "title: Title shouldn't be empty",
+                    "body: Body shouldn't be empty"
+                ],
+                "timestamp": "08-21-2023 12:56:31"
+            }""";
+
+    public static final String UNAUTHORIZED_POST_ACTION = """
+            {
+                "status": 401,
+                "error": "UNAUTHORIZED_POST_ACTION",
+                "message": [
+                    "You can't do this action with that post"
+                ],
+                "timestamp": "08-21-2023 13:27:27"
+            }""";
+
+    public static final String POST_DELETED = """
+            {
+                "id": 1,
+                "message": "Post with id 1 deleted!"
+            }""";
+
+    public static final String POST_UPDATED = """
+            {
+                "id": 3,
+                "message": "Post with id 3 updated!"
+            }""";
+
+    public static final String POST_NOT_FOUND = """
+            {
+                "status": 404,
+                "error": "POST_NOT_FOUND",
+                "message": [
+                    "Post is not found!"
+                ],
+                "timestamp": "08-21-2023 13:38:24"
+            }""";
+
+    public static final String POST_CREATED = """
+            {
+                "title": "Пост User1",
+                "body": "О посте User1 - пост третий",
+                "imageResponse": {
+                    "fileName": "d14f66ddf892b7406a2113e022698a6e.jpg",
+                    "downloadUri": "http://localhost:8080/downloadFile/2",
+                    "contentType": "image/jpeg",
+                    "size": 45575
+                },
+                "message": "Post is successfully created!"
+            }""";
+
+    public static final String POSTS_RETURN_SUCCESS = """
+            {
+                "posts": [
+                    {
+                        "id": 1,
+                        "title": "Пост User1",
+                        "body": "О посте User1 - пост третий",
+                        "timestamp": "2023-08-21T14:42:51",
+                        "image": {
+                            "id": 1,
+                            "fileName": "d14f66ddf892b7406a2113e022698a6e.jpg",
+                            "fileType": "image/jpeg"
+                        }
+                    }
+                ]
+            }""";
+
+    public static final String IMAGE_RETURN_SUCCESS = "{\n\"file\": \"downloadFile\"\n}";
+
+    public static final String SEND_MESSAGE_SUCCESS = """
+            {
+                "senderUsername": "user1",
+                "receiverUsername": "user2",
+                "text": "Всем привет. Это тест отправки сообщений.",
+                "timestamp": "2023-08-21T14:54:31"
+            }""";
+
+    public static final String SEND_MESSAGE_DENIED = """
+            {
+                "status": 405,
+                "error": "MESSAGE_NOT_ALLOWED_ERROR",
+                "message": [
+                    "You cannot send a message to a user that is not yours friend"
+                ],
+                "timestamp": "08-21-2023 14:53:37"
+            }""";
+
+    public static final String SHOW_CHAT_SUCCESS = """
+            [
+                {
+                    "senderUsername": "user1",
+                    "receiverUsername": "user2",
+                    "text": "Чем занимаешься?",
+                    "timestamp": "2023-08-21T04:22:29"
+                },
+                {
+                    "senderUsername": "user1",
+                    "receiverUsername": "user2",
+                    "text": "Как день прошел?",
+                    "timestamp": "2023-08-21T04:22:37"
+                },
+                {
+                    "senderUsername": "user2",
+                    "receiverUsername": "user1",
+                    "text": "Код пишу",
+                    "timestamp": "2023-08-21T04:24:10"
+                },
+                {
+                    "senderUsername": "user2",
+                    "receiverUsername": "user1",
+                    "text": "Дома был.",
+                    "timestamp": "2023-08-21T04:24:17"
+                }
+            ]""";
+
+    public static final String SHOW_CHAT_DENIED = """
+            {
+                "status": 405,
+                "error": "CHAT_NOT_ALLOWED_ERROR",
+                "message": [
+                    "You must be friends!"
+                ],
+                "timestamp": "08-21-2023 15:00:09"
+            }""";
+
+    public static final String FEED_RECEIVED_SUCCESS = """
+            {
+              "totalItems": 0,
+              "feed": [
+                {
+                  "username": "user4",
+                  "lastPost": {
+                    "title": "Пост User4",
+                    "body": "О посте User4 - пост второй",
+                    "timestamp": "2023-08-21T15:39:04",
+                    "imageInfo": {
+                      "filename": "d14f66ddf892b7406a2113e022698a6e.jpg"
+                    }
+                  }
+                },
+                {
+                  "username": "user3",
+                  "lastPost": {
+                    "title": "Пост User3",
+                    "body": "О посте User5 - пост второй",
+                    "timestamp": "2023-08-21T15:38:45",
+                    "imageInfo": {
+                      "filename": "d14f66ddf892b7406a2113e022698a6e.jpg"
+                    }
+                  }
+                },
+                {
+                  "username": "user2",
+                  "lastPost": {
+                    "title": "Пост User5",
+                    "body": "О посте User5 - пост второй",
+                    "timestamp": "2023-08-21T15:38:24",
+                    "imageInfo": {
+                      "filename": "d14f66ddf892b7406a2113e022698a6e.jpg"
+                    }
+                  }
+                }
+              ],
+              "totalPages": 0,
+              "currentPage": 0
+            }
+            """;
 }

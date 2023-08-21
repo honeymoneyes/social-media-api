@@ -23,14 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.projects.socialmediaapi.security.constants.SecurityEndpointConstants.*;
+import static com.projects.socialmediaapi.swagger.DescriptionConstants.*;
 import static com.projects.socialmediaapi.swagger.values.ExampleValues.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(MAIN_AUTH)
 @Tag(
-        name = "Контроллер аутентификации",
-        description = "Контроллер для регистрации, входа и обновления токенов аутентификации")
+        name = "Аутентификация",
+        description = AUTH_TAG_DESCRIPTION)
 public class AuthController {
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -41,7 +42,7 @@ public class AuthController {
     @PostMapping(SIGN_UP)
     @Operation(
             summary = "Регистрация пользователя",
-            description = "Регистрация нового пользователя в системе")
+            description = AUTH_SIGN_UP_DESCRIPTION)
     @ApiResponse(
             responseCode = "200",
             description = "Пользователь успешно зарегистрирован",
@@ -77,7 +78,7 @@ public class AuthController {
     @PostMapping(SIGN_IN)
     @Operation(
             summary = "Аутентификация пользователя",
-            description = "Вход зарегистрированного пользователя в систему")
+            description = AUTH_SIGN_IN_DESCRIPTION)
     @ApiResponse(
             responseCode = "200",
             description = "Вход выполнен успешно",
@@ -133,7 +134,7 @@ public class AuthController {
     @PostMapping(REFRESH_TOKEN)
     @Operation(
             summary = "Обновление токена",
-            description = "Обновление access и refresh токенов аутентификации")
+            description = AUTH_REFRESH_DESCRIPTION)
     @ApiResponse(responseCode = "200",
             description = "Токен обновлен успешно",
             content = @Content(mediaType = "application/json",

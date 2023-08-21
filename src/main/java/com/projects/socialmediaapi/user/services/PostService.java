@@ -39,14 +39,13 @@ public class PostService {
     private final ImageRepository imageRepository;
 
     // CREATE ----------------------------------------------------------------------------------------------------------
-
     @Transactional
-    public UploadPostResponse createPost(PostRequest request)  {
+    public UploadPostResponse createPost(PostRequest request) {
 
         Person person = getAuthenticatePerson();
 
         if (imageRequestIsNull(request)) {
-            return getUploadPostResponse(request);
+            return getUploadPostResponse(request, person);
         }
 
         Image image = imageService.getImage(request, person);
@@ -119,7 +118,7 @@ public class PostService {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    
+
     private Post getPostById(Long id) {
         return postRepository
                 .findById(id)
@@ -127,7 +126,7 @@ public class PostService {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    
+
     private static DeletePostResponse getDeletePostResponse(Long id) {
         return DeletePostResponse.builder()
                 .id(id)
@@ -142,9 +141,9 @@ public class PostService {
         Person person = getPersonById(postId);
         return getPostResponse(person);
     }
-    
+
     // -----------------------------------------------------------------------------------------------------------------
-    
+
     private static PostResponse getPostResponse(Person person) {
         return PostResponse.builder()
                 .posts(person.getPosts())
@@ -166,11 +165,22 @@ public class PostService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private UploadPostResponse getUploadPostResponse(PostRequest request) {
+    private UploadPostResponse getUploadPostResponse(PostRequest request, Person person) {
+        postRepository.save(createPostWithoutImage(request, person));
         return UploadPostResponse.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
                 .message(CREATE_SUCCESS)
+                .build();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static Post createPostWithoutImage(PostRequest request, Person person) {
+        return Post.builder()
+                .title(request.getTitle())
+                .body(request.getBody())
+                .person(person)
                 .build();
     }
 

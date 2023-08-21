@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+import static com.projects.socialmediaapi.swagger.DescriptionConstants.FRIENDSHIP_TAG_DESCRIPTION;
 import static com.projects.socialmediaapi.swagger.values.ExampleValues.*;
 import static com.projects.socialmediaapi.user.constants.FriendEndpointConstants.*;
 
@@ -58,7 +59,7 @@ import static com.projects.socialmediaapi.user.constants.FriendEndpointConstants
                 examples = @ExampleObject(value = SELF_FOLLOW_UNFOLLOW_ERROR)
 
         ))
-@Tag(name = "Друзья", description = "Управление друзьями и подписчиками пользователей")
+@Tag(name = "Друзья", description = FRIENDSHIP_TAG_DESCRIPTION)
 public class FriendShipController {
     // -----------------------------------------------------------------------------------------------------------------
 
