@@ -1,7 +1,10 @@
 package com.projects.socialmediaapi.user.advice;
 
 import com.projects.socialmediaapi.security.advice.ErrorDetails;
-import com.projects.socialmediaapi.user.exceptions.*;
+import com.projects.socialmediaapi.user.exceptions.FilePathInvalidException;
+import com.projects.socialmediaapi.user.exceptions.ImageNotFoundException;
+import com.projects.socialmediaapi.user.exceptions.PostNotFoundException;
+import com.projects.socialmediaapi.user.exceptions.UnauthorizedPostAction;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,18 +16,10 @@ import static org.springframework.http.HttpStatus.*;
 public class PostControllerAdvice {
     // -----------------------------------------------------------------------------------------------------------------
 
-    @ExceptionHandler(UnauthorizedPostDeletedException.class)
-    @ResponseStatus(FORBIDDEN)
-    public ErrorDetails handleUnauthorizedPostDeletedException(UnauthorizedPostDeletedException exception) {
-        return getErrorDetails(FORBIDDEN, "POST_CANNOT_DELETE", exception);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    @ExceptionHandler(UnauthorizedPostUpdatedException.class)
-    @ResponseStatus(FORBIDDEN)
-    public ErrorDetails handleUnauthorizedPostUpdatedException(UnauthorizedPostUpdatedException exception) {
-        return getErrorDetails(FORBIDDEN, "POST_CANNOT_UPDATE", exception);
+    @ExceptionHandler(UnauthorizedPostAction.class)
+    @ResponseStatus(UNAUTHORIZED)
+    public ErrorDetails handleUnauthorizedPostDeletedException(UnauthorizedPostAction exception) {
+        return getErrorDetails(UNAUTHORIZED, "UNAUTHORIZED_POST_ACTION", exception);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

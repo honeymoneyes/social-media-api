@@ -14,7 +14,7 @@ public class PostConstants {
 
     public static final String POST_UPDATED = "Post with id %d updated!";
 
-    public static final String UNAUTHORIZED_POST_DELETE = "You can't delete this post!";
+    public static final String UNAUTHORIZED_POST_ACTION = "You can't do this action with that post";
 
-    public static final String UNAUTHORIZED_POST_UPDATE = "You can't update this post!";
+    public static final String OUT_OF_RANGE = "Requested page number is out of range.";
 }

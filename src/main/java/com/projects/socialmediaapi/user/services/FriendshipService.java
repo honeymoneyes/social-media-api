@@ -9,21 +9,21 @@ import com.projects.socialmediaapi.user.payload.responses.FriendShipResponse;
 import com.projects.socialmediaapi.user.payload.responses.PersonResponse;
 import com.projects.socialmediaapi.user.repositories.FriendshipRepository;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
-import com.projects.socialmediaapi.user.services.UserInteractionService.Result;
+import com.projects.socialmediaapi.user.services.UserInteractionService.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
 import static com.projects.socialmediaapi.user.constants.RelationshipActionConstants.*;
 import static com.projects.socialmediaapi.user.constants.UserConstants.*;
-import static com.projects.socialmediaapi.user.enums.RelationshipStatus.*;
+import static com.projects.socialmediaapi.user.enums.RelationshipStatus.FRIENDS;
+import static com.projects.socialmediaapi.user.enums.RelationshipStatus.SUBSCRIBERS;
 import static com.projects.socialmediaapi.user.enums.RequestStatus.*;
-import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
+import static com.projects.socialmediaapi.user.services.UserInteractionService.*;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -41,7 +41,7 @@ public class FriendshipService {
     @Transactional
     public FriendShipResponse follow(Long receiverId) {
 
-        Result result = checkUsersAreNotSameUserAndGetThem(receiverId);
+        Result result = userInteractionService.checkUsersAreNotSameUserAndGetThem(receiverId);
 
         if (!areUsersFriends(result)) {
             if (isOtherPersonSubscriberOfLoggedInPerson(result)) {
@@ -67,7 +67,7 @@ public class FriendshipService {
     @Transactional
     public FriendShipResponse unfollow(Long userId) {
 
-        Result result = checkUsersAreNotSameUserAndGetThem(userId);
+        Result result = userInteractionService.checkUsersAreNotSameUserAndGetThem(userId);
 
         Friendship friendship = getFriendshipBySenderAndReceiver(result);
 
@@ -89,7 +89,7 @@ public class FriendshipService {
     @Transactional
     public FriendShipResponse acceptRequest(Long subscriberId) {
 
-        Result result = checkUsersAreNotSameUserAndGetThem(subscriberId);
+        Result result = userInteractionService.checkUsersAreNotSameUserAndGetThem(subscriberId);
 
         Friendship friendship = getFriendshipBySenderAndReceiver(result);
 
@@ -112,7 +112,7 @@ public class FriendshipService {
     @Transactional
     public FriendShipResponse rejectRequest(Long senderId) {
 
-        Result result = checkUsersAreNotSameUserAndGetThem(senderId);
+        Result result = userInteractionService.checkUsersAreNotSameUserAndGetThem(senderId);
 
         if (areUsersFriends(result)) {
             removeFriend(otherPerson(result).getId());
@@ -145,7 +145,7 @@ public class FriendshipService {
     @Transactional
     public FriendShipResponse removeFriend(Long userId) {
 
-        Result result = checkUsersAreNotSameUserAndGetThem(userId);
+        Result result = userInteractionService.checkUsersAreNotSameUserAndGetThem(userId);
 
         if (areUsersFriends(result)) {
             removeAllRelationshipsForLoggedInPerson(result);
@@ -250,27 +250,6 @@ public class FriendshipService {
                 .receiver(otherPerson(result))
                 .requestStatus(PENDING)
                 .build();
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /*Check loggedInPerson and other person aren't same user*/
-    public static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
-        if (Objects.equals(loggedInPerson.getId(), otherPerson.getId())) {
-            throw new SelfActionException(SELF_ACTION);
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private static Person loggedInPerson(Result result) {
-        return result.loggedInPerson();
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private static Person otherPerson(Result result) {
-        return result.otherPerson();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -390,15 +369,6 @@ public class FriendshipService {
     private void rejectRequestAndSave(Friendship friendship) {
         setFriendshipStatusRejected(friendship);
         friendshipRepository.save(friendship);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private Result checkUsersAreNotSameUserAndGetThem(Long userId) {
-        Result result = userInteractionService.getLoggedUserAndOtherUser(userId);
-
-        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
-        return result;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

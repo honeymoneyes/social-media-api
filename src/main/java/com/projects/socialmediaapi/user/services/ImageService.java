@@ -11,8 +11,6 @@ import com.projects.socialmediaapi.user.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +24,8 @@ import java.util.Objects;
 import static com.projects.socialmediaapi.user.constants.PostConstants.IMAGE_NOT_FOUND;
 import static com.projects.socialmediaapi.user.constants.PostConstants.INVALID_FILE_PATH;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.MediaType.parseMediaType;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +39,14 @@ public class ImageService {
     // -----------------------------------------------------------------------------------------------------------------
 
     @Transactional
-    public Image createPostWithImageAndReturnImage(PostRequest request,
-                                                   Person person) throws IOException {
+    public Image getImage(PostRequest request,
+                          Person person) {
         String fileName = getFileName(request.getImage());
         isFilepathValid(fileName);
+        return createPostWithImageAndReturnImage(request, person, fileName);
+    }
+
+    private Image createPostWithImageAndReturnImage(PostRequest request, Person person, String fileName) {
         Post post = createPost(request, person);
         Image image = createImage(request, fileName, post);
         postRepository.save(post);
@@ -61,30 +65,64 @@ public class ImageService {
 
     public static String getFileName(MultipartFile file) {
         return StringUtils
-                .cleanPath(Objects
-                        .requireNonNull(file
-                                .getOriginalFilename()));
+                .cleanPath(getCleanPath(file));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static String getCleanPath(MultipartFile file) {
+        return Objects.requireNonNull(file.getOriginalFilename());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public ResponseEntity<Resource> showImageByPostId(Long postId) {
-        Image image = imageRepository
+        Image image = getImageById(postId);
+        return transformImageBytesToImage(image);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static ResponseEntity<Resource> transformImageBytesToImage(Image image) {
+        return ResponseEntity.ok()
+                .contentType(parseMediaType(getFileType(image)))
+                .header(CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + getFileName(image) + "\"")
+                .body(getImage(image));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static ByteArrayResource getImage(Image image) {
+        return new ByteArrayResource(image.getData());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static String getFileName(Image image) {
+        return image.getFileName();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static String getFileType(Image image) {
+        return image.getFileType();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private Image getImageById(Long postId) {
+        return imageRepository
                 .findById(postId)
                 .orElseThrow(() -> new ImageNotFoundException(IMAGE_NOT_FOUND));
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(image.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + image.getFileName() + "\"")
-                .body(new ByteArrayResource(image.getData()));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     private static Post createPost(PostRequest request, Person person) {
         return Post.builder()
-                .title(request.getTitle())
-                .body(request.getBody())
+                .title(getTitle(request))
+                .body(transformImageBytesToImage(request))
                 .timestamp(getTimestamp(LocalDateTime.now()))
                 .person(person)
                 .build();
@@ -92,13 +130,41 @@ public class ImageService {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static Image createImage(PostRequest request, String fileName, Post post) throws IOException {
-        return Image.builder()
-                .fileName(fileName)
-                .fileType(request.getImage().getContentType())
-                .data(request.getImage().getBytes())
-                .post(post)
-                .build();
+    private static String transformImageBytesToImage(PostRequest request) {
+        return request.getBody();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static String getTitle(PostRequest request) {
+        return request.getTitle();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static Image createImage(PostRequest request, String fileName, Post post){
+        try {
+            return Image.builder()
+                    .fileName(fileName)
+                    .fileType(getContentType(request))
+                    .data(getData(request))
+                    .post(post)
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static byte[] getData(PostRequest request) throws IOException {
+        return request.getImage().getBytes();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static String getContentType(PostRequest request) {
+        return request.getImage().getContentType();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

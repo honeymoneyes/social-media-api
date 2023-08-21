@@ -13,10 +13,8 @@ import com.projects.socialmediaapi.security.payload.responses.TokenRefreshRespon
 import com.projects.socialmediaapi.security.services.RefreshTokenService;
 import com.projects.socialmediaapi.security.services.impl.PersonDetails;
 import com.projects.socialmediaapi.user.exceptions.UserAlreadyExistException;
-import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
-import com.projects.socialmediaapi.user.services.UserInteractionService;
 import com.projects.socialmediaapi.utils.mappers.PersonMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +28,6 @@ import static com.projects.socialmediaapi.security.constants.AuthConstants.BEARE
 import static com.projects.socialmediaapi.security.constants.AuthConstants.REGISTERED_SUCCESS;
 import static com.projects.socialmediaapi.security.constants.TokenConstants.REFRESH_TOKEN_NOT_FOUND;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_ALREADY_EXIST;
-import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
 
 @Service

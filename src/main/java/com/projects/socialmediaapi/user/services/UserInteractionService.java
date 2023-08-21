@@ -2,6 +2,7 @@ package com.projects.socialmediaapi.user.services;
 
 import com.projects.socialmediaapi.security.advice.ErrorDetails;
 import com.projects.socialmediaapi.security.services.impl.PersonDetails;
+import com.projects.socialmediaapi.user.exceptions.SelfActionException;
 import com.projects.socialmediaapi.user.exceptions.UserNotFoundException;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.repositories.PersonRepository;
@@ -13,9 +14,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static com.projects.socialmediaapi.security.constants.TokenConstants.DATE_TIME_FORMAT;
+import static com.projects.socialmediaapi.user.constants.UserConstants.SELF_ACTION;
 import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 
 @Service
@@ -97,6 +100,37 @@ public class UserInteractionService {
 
     public static Supplier<UserNotFoundException> UserNotFoundException() {
         return () -> new UserNotFoundException(USER_NOT_FOUND);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public Result checkUsersAreNotSameUserAndGetThem(Long userId) {
+        Result result = getLoggedUserAndOtherUser(userId);
+
+        areIdsFromSameUser(loggedInPerson(result), otherPerson(result));
+        return result;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /*Check loggedInPerson and other person aren't same user*/
+    public static void areIdsFromSameUser(Person loggedInPerson, Person otherPerson) {
+        if (Objects.equals(loggedInPerson.getId(), otherPerson.getId())) {
+            throw new SelfActionException(SELF_ACTION);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+
+    public static Person loggedInPerson(Result result) {
+        return result.loggedInPerson();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static Person otherPerson(Result result) {
+        return result.otherPerson();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

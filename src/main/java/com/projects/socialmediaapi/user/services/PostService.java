@@ -1,7 +1,9 @@
 package com.projects.socialmediaapi.user.services;
 
 import com.projects.socialmediaapi.security.services.impl.PersonDetails;
-import com.projects.socialmediaapi.user.exceptions.*;
+import com.projects.socialmediaapi.user.exceptions.ImageNotFoundException;
+import com.projects.socialmediaapi.user.exceptions.PostNotFoundException;
+import com.projects.socialmediaapi.user.exceptions.UnauthorizedPostAction;
 import com.projects.socialmediaapi.user.models.Image;
 import com.projects.socialmediaapi.user.models.Person;
 import com.projects.socialmediaapi.user.models.Post;
@@ -19,10 +21,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import static com.projects.socialmediaapi.user.constants.PostConstants.*;
-import static com.projects.socialmediaapi.user.constants.UserConstants.USER_NOT_FOUND;
 import static com.projects.socialmediaapi.user.services.ImageService.getFileName;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.UserNotFoundException;
 import static com.projects.socialmediaapi.user.services.UserInteractionService.getTimestamp;
@@ -41,7 +41,7 @@ public class PostService {
     // CREATE ----------------------------------------------------------------------------------------------------------
 
     @Transactional
-    public UploadPostResponse createPost(PostRequest request) throws IOException {
+    public UploadPostResponse createPost(PostRequest request)  {
 
         Person person = getAuthenticatePerson();
 
@@ -49,19 +49,11 @@ public class PostService {
             return getUploadPostResponse(request);
         }
 
-        Image image = getImage(request, person);
+        Image image = imageService.getImage(request, person);
 
         return getUploadPostResponse(request,
                 image,
                 getFileDownloadUri(image));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private Image getImage(PostRequest request, Person person) throws IOException {
-        return imageService.createPostWithImageAndReturnImage(
-                request,
-                person);
     }
 
     // UPDATE ----------------------------------------------------------------------------------------------------------
@@ -72,6 +64,7 @@ public class PostService {
         Post post = getPostById(id);
 
         checkIfPersonNotAuthor(person, post);
+
         setTitleBodyTimestamp(request, post);
 
         if (imageRequestIsNull(request)) {
@@ -115,7 +108,7 @@ public class PostService {
 
     private static void checkIfPersonNotAuthor(Person person, Post post) {
         if (isPersonNotAuthor(person, post)) {
-            throw new UnauthorizedPostDeletedException(UNAUTHORIZED_POST_DELETE);
+            throw new UnauthorizedPostAction(UNAUTHORIZED_POST_ACTION);
         }
     }
 
